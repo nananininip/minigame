@@ -1,0 +1,15 @@
+:root { --green: #7acb96; --bg: #f2ece2; }
+body.center-screen {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; background: var(--bg); font-family: 'Prompt', sans-serif; text-align: center;
+}
+h1 { font-size: 2rem; margin-bottom: 1.2rem; }
+#nameForm input {
+  padding: 0.8rem 1.2rem; border-radius: 8px; border: 1.5px solid #aaa; margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+.start-btn {
+  padding: 0.8rem 2rem; background: var(--green); color: #fff; border-radius: 8px;
+  font-weight: 600; border: none; font-size: 1.08rem; cursor: pointer;
+}
+.start-btn:hover { background: #5cb877; }
