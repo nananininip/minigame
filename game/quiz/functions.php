@@ -12,12 +12,17 @@ function getQuestions($topic) {
     $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
     foreach ($lines as $line) {
-        list($question_topic, $question, $answer, $image) = explode('|', $line);
+        $parts = explode('|', $line);
+        // For 3 choices + correct answer: must have 6 fields
+        if (count($parts) < 6) continue;
+
+        list($question_topic, $question, $choice1, $choice2, $choice3, $correct) = $parts;
+
         if ($question_topic === $topic) {
             $questions[] = [
                 'question' => $question,
-                'answer' => $answer,
-                'image' => $image
+                'choices' => [$choice1, $choice2, $choice3],
+                'answer' => $correct
             ];
         }
     }
@@ -30,6 +35,7 @@ function getQuestions($topic) {
     shuffle($questions);
     return array_slice($questions, 0, 4);
 }
+
 
 function getLeaderboard() {
     $file = 'leaderboard.txt';

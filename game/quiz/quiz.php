@@ -7,6 +7,9 @@ if (!isset($_SESSION['nickname'])) {
     exit();
 }
 
+// Topic can be from URL or fixed as 'quiz'
+$topic = isset($_GET['topic']) ? $_GET['topic'] : 'quiz';
+
 // Initialize overall points if not set
 if (!isset($_SESSION['overall_points'])) {
     $_SESSION['overall_points'] = 0;
@@ -14,7 +17,6 @@ if (!isset($_SESSION['overall_points'])) {
 
 // Check if quiz is already initialized in the session
 if (!isset($_SESSION['current_quiz'])) {
-    $topic = $_GET['topic'];
     $questions = getQuestions($topic);
     $_SESSION['current_quiz'] = $questions; // Store the current quiz in session
     $_SESSION['correct'] = 0;
@@ -28,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $answers = $_POST['answers'];
     foreach ($answers as $index => $answer) {
         // Check the answer against the questions in the session
-        if (trim(strtolower($answer)) == trim(strtolower($questions[$index]['answer']))) {
+        if (trim($answer) == trim($questions[$index]['answer'])) {
             $_SESSION['correct']++;
         } else {
             $_SESSION['incorrect']++;
@@ -52,89 +54,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 ?>
+<!DOCTYPE html>
+<html lang="th">
 
-<html>
 <head>
-    <title>Challenge FUN - Quiz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-            
-        }
-        .navbar {
-            background-color: rgba(255, 255, 255, 0.9); /* Corrected rgba value */
-            padding: 20px;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-            margin: 0 auto;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        .container {
-            background-color: #e6f7ff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px #D3D3D3;
-            max-width: 790px;
-            margin: 100px auto 20px auto; /* Adjusted for fixed navbar */
-            align-items: center;
-            text-align: center;
-        }
-        .card {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-top: 20px;
-            margin-bottom: 20px;
-            width: auto;
-            display: flex;
-            flex-direction: column;
-            
-        }
-        .card-body {
-            padding: 15px;
-        }
-        .btn-exit {
-            background-color: #dc3545;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: bold;
-            border: 3px solid #0066cc;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            position: absolute;
-            top: 30px;
-            right: 50px;
-
-        }
-        .btn-submit {
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px;
-            color: #ffffff;
-            border: 3px solid #0066cc;
-            cursor: pointer;
-            background-color: #e67300;
-            border-radius: 5px;
-            margin-top: 10px;
-            margin-left: 10px;
-        }   
-    </style>
+    <meta charset="UTF-8">
+    <title>MiniGame - Quiz</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <nav class="navbar">
         <a class="navbar-brand" href="menu.php">Quiz</a>
@@ -149,24 +77,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </nav>
     <form method="post">
         <div class="container">
-            <h1><?php echo ucfirst($topic); ?> Quiz</h1>
+            <h1>Quiz Game</h1>
             <?php foreach ($questions as $index => $question): ?>
-                <div class="card">
-                    <div class="card-body">
-                        <?php if ($topic == 'movies'): ?>
-                            <p><?php echo htmlspecialchars($question['question']); ?></p>
-                            <label><input type="radio" name="answers[<?php echo $index; ?>]" value="true" required> True</label>
-                            <label><input type="radio" name="answers[<?php echo $index; ?>]" value="false" required> False</label>
-                        <?php else: ?> 
-                            <img src="<?php echo htmlspecialchars($question['image']); ?>" width="250"  alt="Question Image">
-                            <p><?php echo htmlspecialchars($question['question']); ?></p>
-                            <input type="text" name="answers[<?php echo $index; ?>]">
-                        <?php endif; ?>
-                    </div>
-                </div>	
+            <div class="card">
+                <div class="card-body">
+                    <p><?php echo htmlspecialchars($question['question']); ?></p>
+                    <?php foreach ($question['choices'] as $choice): ?>
+                    <label>
+                        <input type="radio" name="answers[<?php echo $index; ?>]"
+                            value="<?php echo htmlspecialchars($choice); ?>" required>
+                        <?php echo htmlspecialchars($choice); ?>
+                    </label><br>
+                    <?php endforeach; ?>
+                </div>
+            </div>
             <?php endforeach; ?>
             <button class="btn-submit" type="submit">Submit Answers</button>
         </div>
     </form>
 </body>
+
 </html>
