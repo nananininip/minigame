@@ -3,21 +3,12 @@
 function getQuestions($topic) {
     $file = 'questions.txt';
     $questions = [];
-
-    // Check if the questions file exists
-    if (!file_exists($file)) {
-        throw new Exception("Questions file not found.");
-    }
-
+    if (!file_exists($file)) throw new Exception("Questions file not found.");
     $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
     foreach ($lines as $line) {
         $parts = explode('|', $line);
-        // For 3 choices + correct answer: must have 6 fields
         if (count($parts) < 6) continue;
-
         list($question_topic, $question, $choice1, $choice2, $choice3, $correct) = $parts;
-
         if ($question_topic === $topic) {
             $questions[] = [
                 'question' => $question,
@@ -26,56 +17,58 @@ function getQuestions($topic) {
             ];
         }
     }
-
-    // Ensure at least 4 questions are available for the quiz
-    if (count($questions) < 4) {
-        throw new Exception("Not enough questions available for this topic.");
-    }
-
+    if (count($questions) < 4) throw new Exception("Not enough questions available for this topic.");
     shuffle($questions);
     return array_slice($questions, 0, 4);
 }
 
-
+// Always recompute 'overall' before saving
 function getLeaderboard() {
     $file = 'leaderboard.txt';
     $leaderboard = [];
-
-    // Check if the file exists
     if (file_exists($file)) {
         $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($lines as $line) {
-            list($nickname, $score) = explode('|', $line);
-            // Store scores in an associative array
-            $leaderboard[trim($nickname)] = (int)trim($score);
+            $parts = explode('|', $line);
+            // support legacy (quiz|waste) and new (quiz|waste|overall)
+            $nickname = trim($parts[0]);
+            $quiz = isset($parts[1]) ? (int)trim($parts[1]) : 0;
+            $waste = isset($parts[2]) ? (int)trim($parts[2]) : 0;
+            // calculate on the fly, ignore stored overall
+            $overall = $quiz + $waste;
+            $leaderboard[$nickname] = ['quiz'=>$quiz, 'waste'=>$waste, 'overall'=>$overall];
         }
     }
-
     return $leaderboard;
 }
 
-function saveScore($nickname, $currentGameScore) {
+// Save/update score for a user and a game ('quiz' or 'waste'), always update overall
+function saveScore($nickname, $gameScore, $game = 'quiz') {
     $file = 'leaderboard.txt';
-    $current_scores = getLeaderboard(); // Get the current scores
+    $scores = getLeaderboard();
 
-    // Check if the player already exists in the leaderboard
-    if (isset($current_scores[$nickname])) {
-        // If the player exists, add the current game score to their overall score
-        $current_scores[$nickname] += $currentGameScore; // Update overall score
-    } else {
-        // If the player does not exist, set their score to the current game score
-        $current_scores[$nickname] = $currentGameScore;
+    // Initialize if new
+    if (!isset($scores[$nickname])) $scores[$nickname] = ['quiz'=>0, 'waste'=>0, 'overall'=>0];
+
+    // Only the relevant game gets added
+    if ($game == 'quiz') {
+        $scores[$nickname]['quiz'] += $gameScore;
+    } elseif ($game == 'waste') {
+        $scores[$nickname]['waste'] += $gameScore;
     }
+    // Always recalc overall (DO NOT just increment the old value)
+    $scores[$nickname]['overall'] = $scores[$nickname]['quiz'] + $scores[$nickname]['waste'];
 
-    // Write updated scores back to the file
-    $handle = fopen($file, 'w'); // Open the file for writing (this overwrites existing content)
+    // Write all
+    $handle = fopen($file, 'w');
     if ($handle) {
-        foreach ($current_scores as $player => $playerScore) {
-            fwrite($handle, $player . '|' . $playerScore . PHP_EOL); // Write each player and their score
+        foreach ($scores as $player => $vals) {
+            // Always write quiz|waste|overall so it's always correct
+            fwrite($handle, $player . '|' . $vals['quiz'] . '|' . $vals['waste'] . '|' . $vals['overall'] . PHP_EOL);
         }
-        fclose($handle); // Close the file
+        fclose($handle);
     } else {
-        throw new Exception("Failed to open leaderboard file for writing."); // Improved error handling
+        throw new Exception("Failed to open leaderboard file for writing.");
     }
 }
 ?>

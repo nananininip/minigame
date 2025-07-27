@@ -2,149 +2,48 @@
 session_start();
 require 'functions.php';
 
-// Redirect to the index page if the nickname is not set in the session
 if (!isset($_SESSION['nickname'])) {
     header('Location: index.php');
     exit();
 }
 
-// Get the leaderboard data
-$leaderboardData = getLeaderboard();
+$leaderboard = getLeaderboard();
 
-// Convert the associative array into an indexed array for easier sorting
-$leaderboard = [];
-foreach ($leaderboardData as $nickname => $score) {
-    $leaderboard[] = [
-        'nickname' => $nickname,
-        'score' => $score
-    ];
-}
-
-// Search functionality
+// Search functionality (search by nickname, which is the key of $leaderboard)
 $searchNickname = isset($_POST['search_nickname']) ? trim($_POST['search_nickname']) : '';
 if ($searchNickname) {
-    $leaderboard = array_filter($leaderboard, function($player) use ($searchNickname) {
-        return stripos($player['nickname'], $searchNickname) !== false; // Case-insensitive search
-    });
+    $leaderboard = array_filter($leaderboard, function($row, $name) use ($searchNickname) {
+        return stripos($name, $searchNickname) !== false;
+    }, ARRAY_FILTER_USE_BOTH);
 }
 
-// Determine the order by parameter
-$order_by = isset($_GET['order_by']) ? $_GET['order_by'] : 'score';
-if ($order_by === 'nickname') {
-    // Sort by nickname
-    usort($leaderboard, function($a, $b) {
-        return strcmp($a['nickname'], $b['nickname']);
-    });
-} else {
-    // Sort by score (default)
-    usort($leaderboard, function($a, $b) {
-        return $b['score'] - $a['score'];
-    });
-}
+// Sort by overall points (descending)
+uasort($leaderboard, function($a, $b) {
+    return $b['overall'] - $a['overall'];
+});
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="th">
 <head>
-    <title>Challenge FUN - Leaderboard</title>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
     <style>
-        .navbar {
-            background-color: white;
-            background: rgba(300, 300, 300, 0.9);
-            padding: 20px;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-            margin: 0 auto;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        .container {
-            background-color: #FFFFFF;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px #D3D3D3;
-            max-width: 600px;
-            margin: 200px auto 20px auto;
-            text-align: center;
-        }
-        th, td {
-            border: 4px solid #96D4D4;
-            padding: 15px;
-            text-align: center;
-            position: relative; 
-            background-color: #fff; 
-            box-shadow: 0 0 0 2px #0066cc; 
-        }
-        th {
-            font-size: 16px;
-            font-weight: bold;
-            color: #0066cc;
-        }
-        .btn-exit {
-            background-color: #dc3545;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: bold;
-            border: 3px solid #0066cc;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            position: absolute;
-            top: 40px;
-            right: 90px;
-        }
-        .btn-submit {
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px;
-            color: #ffffff;
-            border: 3px solid #0066cc;
-            cursor: pointer;
-            background-color: #e67300;
-            border-radius: 5px;
-            margin-top: 20px;
-        } 
-        table.center {
-            margin-left: auto; 
-            margin-right: auto;
-        }
-        .btn-search {
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 30px;
-            margin-bottom: 25px;
-        }
-        input[type="text"] {
-            margin-top: 30px;
-            padding: 6px;
-            width: 30%;
-            font-size: 20px;
-            border: 2px solid #0066cc; 
-            border-radius: 5px;
-
-        }
-        table.center {
-            margin-left: auto; 
-            margin-right: auto;
-        }
-        .sort-indicator {
-            font-size: 12px;
-            color: #999;
-        }
+        body { background-color: #f6f7fa; margin: 0; font-family: 'Prompt', Arial, sans-serif;}
+        .navbar { background: rgba(255,255,255,0.95); padding: 18px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.07); width: 100vw; position: fixed; top: 0; left: 0; display: flex; justify-content: space-between; align-items: center; z-index: 10;}
+        .navbar-brand { font-size: 2rem; font-weight: 700; color: #e67300; margin-left: 2rem; letter-spacing: 1px;}
+        .navbar-buttons { margin-right: 2rem; display: flex; gap: 1rem;}
+        .btn-exit { background-color: #dc3545; color: #fff; font-size: 1rem; font-weight: bold; border: 2px solid #0066cc; padding: 9px 20px; border-radius: 6px; cursor: pointer; transition: background 0.16s;}
+        .btn-exit:hover { background: #e96b7a; }
+        .btn-submit, .btn-newQ { font-size: 1rem; font-weight: bold; padding: 9px 22px; color: #fff; border: 2px solid #0066cc; border-radius: 6px; cursor: pointer; background-color: #e67300; margin-left: 8px; transition: background 0.16s;}
+        .btn-submit:hover, .btn-newQ:hover { background: #f59f42; }
+        .container { background: #fff; padding: 32px 18px 24px 18px; border-radius: 16px; box-shadow: 0px 4px 24px #D3D3D3bb; max-width: 640px; margin: 110px auto 30px auto; text-align: center;}
+        table { margin: 0 auto 8px auto; border-collapse: separate; border-spacing: 0;}
+        th, td { border: 3px solid #96D4D4; padding: 13px 20px; text-align: center; background: #fff; min-width: 90px; font-size: 1.02rem;}
+        th { font-size: 1.15rem; font-weight: 600; color: #0066cc; background: #eaf6ff;}
+        .button-container { display: flex; justify-content: center; margin-top: 20px;}
+        input[type="text"] { margin-top: 30px; padding: 6px; width: 30%; font-size: 20px; border: 2px solid #0066cc; border-radius: 5px; }
+        .btn-search { font-size: 16px; font-weight: bold; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 30px; margin-bottom: 25px;}
+        @media (max-width: 600px) {.container { margin-top: 120px;} .navbar { flex-direction: column; align-items: flex-start; } .navbar-brand, .navbar-buttons { margin: 0; } table, th, td { font-size: .99rem; }}
     </style>
 </head>
 <body>
@@ -159,7 +58,6 @@ if ($order_by === 'nickname') {
             </form>
         </div>
     </nav>
-   
     <div class="container">
         <h1>Leaderboard</h1>
         <form method="POST">
@@ -168,28 +66,20 @@ if ($order_by === 'nickname') {
         </form>
         <table class="center">
             <tr>
-                <th>
-                    <a href="?order_by=nickname">Nickname</a>
-                    <?php if ($order_by === 'nickname') echo '<span class="sort-indicator">↑</span>'; ?>
-                </th>
-                <th>
-                    <a href="?order_by=score">Score</a>
-                    <?php if ($order_by === 'score') echo '<span class="sort-indicator">↑</span>'; ?>
-                </th>
+                <th>Nickname</th>
+                <th>Quiz</th>
+                <th>Waste</th>
+                <th>Overall</th>
             </tr>
-            <?php foreach ($leaderboard as $player): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($player['nickname']); ?></td>
-                    <td><?php echo htmlspecialchars($player['score']); ?></td>
-                </tr>
+            <?php foreach ($leaderboard as $name => $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($name); ?></td>
+                <td><?php echo $row['quiz']; ?></td>
+                <td><?php echo $row['waste']; ?></td>
+                <td><?php echo $row['overall']; ?></td>
+            </tr>
             <?php endforeach; ?>
         </table>
-        <form action="?order_by=score" method="post" style="display: inline;">
-            <button type="submit" class="btn-submit">Sort by Highest Score</button>
-        </form>
-        <form action="menu.php" method="post" style="display: inline;">
-            <button type="submit" class="btn-submit">Back to Menu</button>
-        </form>
     </div>
 </body>
 </html>
