@@ -8,13 +8,22 @@ if (!isset($_SESSION['nickname'])) {
 }
 
 $nickname = $_SESSION['nickname'];
-$lb = getLeaderboard();
-$overall_points = isset($lb[$nickname]) ? $lb[$nickname]['overall'] : 0;
-
+$gameType = isset($_SESSION['game_type']) ? $_SESSION['game_type'] : 'quiz';
 $correct = isset($_SESSION['correct']) ? $_SESSION['correct'] : 0;
 $incorrect = isset($_SESSION['incorrect']) ? $_SESSION['incorrect'] : 0;
-// Scoring: 1 point per correct, 0 for incorrect/unanswered
 $currentGameScore = $correct;
+
+saveScore($nickname, $currentGameScore, $gameType); // ✅ this is correct
+
+
+
+// Load leaderboard
+$leaderboard = getLeaderboard();
+
+// Pull updated scores
+$overall_points = isset($leaderboard[$nickname]) ? $leaderboard[$nickname]['overall'] : 0;
+$thisGamePoints = isset($leaderboard[$nickname][$gameType]) ? $leaderboard[$nickname][$gameType] : $currentGameScore;
+
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -64,8 +73,9 @@ $currentGameScore = $correct;
                 <td><?php echo htmlspecialchars($nickname); ?></td>
                 <td><?php echo $correct; ?></td>
                 <td><?php echo $incorrect; ?></td>
-                <td><?php echo $currentGameScore; ?></td>
+                <td><?php echo $thisGamePoints; ?></td>
                 <td><?php echo $overall_points; ?></td>
+
             </tr>
         </table>
         <div class="button-container">

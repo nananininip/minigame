@@ -43,32 +43,38 @@ function getLeaderboard() {
 }
 
 // Save/update score for a user and a game ('quiz' or 'waste'), always update overall
-function saveScore($nickname, $gameScore, $game = 'quiz') {
-    $file = 'leaderboard.txt';
-    $scores = getLeaderboard();
+function saveScore($nickname, $score, $gameType) {
+    $filename = 'leaderboard.txt';
+    $leaderboard = [];
 
-    // Initialize if new
-    if (!isset($scores[$nickname])) $scores[$nickname] = ['quiz'=>0, 'waste'=>0, 'overall'=>0];
-
-    // Only the relevant game gets added
-    if ($game == 'quiz') {
-        $scores[$nickname]['quiz'] += $gameScore;
-    } elseif ($game == 'waste') {
-        $scores[$nickname]['waste'] += $gameScore;
-    }
-    // Always recalc overall (DO NOT just increment the old value)
-    $scores[$nickname]['overall'] = $scores[$nickname]['quiz'] + $scores[$nickname]['waste'];
-
-    // Write all
-    $handle = fopen($file, 'w');
-    if ($handle) {
-        foreach ($scores as $player => $vals) {
-            // Always write quiz|waste|overall so it's always correct
-            fwrite($handle, $player . '|' . $vals['quiz'] . '|' . $vals['waste'] . '|' . $vals['overall'] . PHP_EOL);
+    // Load existing data
+    if (file_exists($filename)) {
+        $lines = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            $parts = explode('|', $line);
+            $name = $parts[0];
+            $leaderboard[$name] = [
+                'quiz' => isset($parts[1]) ? (int)$parts[1] : 0,
+                'waste' => isset($parts[2]) ? (int)$parts[2] : 0,
+                'overall' => isset($parts[3]) ? (int)$parts[3] : 0
+            ];
         }
-        fclose($handle);
-    } else {
-        throw new Exception("Failed to open leaderboard file for writing.");
     }
+
+    // If user not in leaderboard, initialize
+    if (!isset($leaderboard[$nickname])) {
+        $leaderboard[$nickname] = ['quiz' => 0, 'waste' => 0, 'overall' => 0];
+    }
+
+    // Update score
+    $leaderboard[$nickname][$gameType] = $score;
+    $leaderboard[$nickname]['overall'] = $leaderboard[$nickname]['quiz'] + $leaderboard[$nickname]['waste'];
+
+    // Save back to file
+    $fp = fopen($filename, 'w');
+    foreach ($leaderboard as $name => $scores) {
+        $line = implode('|', [$name, $scores['quiz'], $scores['waste'], $scores['overall']]);
+        fwrite($fp, $line . PHP_EOL);
+    }
+    fclose($fp);
 }
-?>

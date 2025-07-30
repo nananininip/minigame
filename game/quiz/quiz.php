@@ -8,6 +8,8 @@ if (!isset($_SESSION['nickname'])) {
 }
 
 $topic = isset($_GET['topic']) ? $_GET['topic'] : 'quiz';
+$_SESSION['game_type'] = $topic;
+
 
 // Initialize overall points if not set
 if (!isset($_SESSION['overall_points'])) {
@@ -45,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // 1 point per correct answer, 0 for incorrect
         $currentGameScore = $_SESSION['correct'];
         $nickname = $_SESSION['nickname'];
-        saveScore($nickname, $currentGameScore, 'quiz'); // Save to leaderboard
+        saveScore($nickname, $currentGameScore, $topic);
         $_SESSION['overall_points'] = getLeaderboard()[$nickname]['overall'];
 
         // Cleanup for next quiz
@@ -82,7 +84,7 @@ $question = $questions[$currentIndex];
     </nav>
     <form method="post">
         <div class="container" style="margin-top:40px">
-            <h1>Quiz Game</h1>
+            <h1><?php echo ucfirst($topic); ?> Quiz</h1>
             <div class="card">
                 <div class="card-body">
                     <p style="font-weight:bold;"><?php echo htmlspecialchars($question['question']); ?></p>
