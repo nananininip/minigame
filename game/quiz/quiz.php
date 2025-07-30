@@ -65,11 +65,13 @@ $question = $questions[$currentIndex];
 ?>
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <title>MiniGame - Quiz</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <nav class="navbar">
         <a class="navbar-brand" href="menu.php">Quiz</a>
@@ -85,6 +87,16 @@ $question = $questions[$currentIndex];
     <form method="post">
         <div class="container" style="margin-top:40px">
             <h1><?php echo ucfirst($topic); ?> Quiz</h1>
+            <div id="timerBarContainer"
+                style="width: 100%; background-color: #ddd; height: 12px; border-radius: 10px; margin-bottom: 20px;">
+                <div id="timerBar"
+                    style="width: 100%; height: 100%; background-color: #28a745; border-radius: 10px; transition: width 0.2s;">
+                </div>
+            </div>
+            <div style="text-align:right; font-size:14px; color:#555; margin-bottom:10px;">
+                เหลือเวลา <span id="timeLeft">50</span> วินาที
+            </div>
+
             <div class="card">
                 <div class="card-body">
                     <p style="font-weight:bold;"><?php echo htmlspecialchars($question['question']); ?></p>
@@ -104,5 +116,7 @@ $question = $questions[$currentIndex];
             </div>
         </div>
     </form>
+    <script src="timer.js"></script>
 </body>
+
 </html>

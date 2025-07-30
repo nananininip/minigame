@@ -56,5 +56,6 @@ session_destroy(); // Destroy the session
     <form action="menu.php" method="post">
         <button type="submit" class="btn-newQ">Start New Game</button>
     </form>
+    <script>sessionStorage.removeItem("timeLeft");</script>
 </body>
 </html>

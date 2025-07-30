@@ -84,5 +84,6 @@ $thisGamePoints = isset($leaderboard[$nickname][$gameType]) ? $leaderboard[$nick
             </form>
         </div>
     </div>
+    <script>sessionStorage.removeItem("timeLeft");</script>
 </body>
 </html>
