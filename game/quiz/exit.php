@@ -12,7 +12,9 @@ $nickname = $_SESSION['nickname'];
 
 // Get the overall points from the leaderboard
 $leaderboard = getLeaderboard();
-$overall_points = isset($leaderboard[$nickname]) ? $leaderboard[$nickname] : 0;
+$overall_points = isset($leaderboard[$nickname]['overall']) ? $leaderboard[$nickname]['overall'] : 0;
+$quiz_points = isset($leaderboard[$nickname]['quiz']) ? $leaderboard[$nickname]['quiz'] : 0;
+$waste_points = isset($leaderboard[$nickname]['waste']) ? $leaderboard[$nickname]['waste'] : 0;
 
 // Reset session variables
 unset($_SESSION['overall_points']); // Reset overall points
@@ -26,36 +28,42 @@ session_destroy(); // Destroy the session
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Challenge FUN - Exit</title>
 </head>
 <style>
     body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin-top: 5%;
-            text-align: center;
-            
-        }
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin-top: 5%;
+        text-align: center;
+
+    }
+
     .btn-newQ {
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px;
-            color: white;
-            border: 3px solid #0066cc;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #96D4D4;
-        }        
+        font-size: 16px;
+        font-weight: bold;
+        padding: 10px;
+        color: white;
+        border: 3px solid #0066cc;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #96D4D4;
+    }
 </style>
 </head>
+
 <body>
     <h1>Goodbye, <?php echo htmlspecialchars($nickname); ?></h1>
-    <p>Your overall points: <?php echo $overall_points; ?></p>
+    <p>Quiz Points: <?php echo $quiz_points; ?></p>
+    <p>Waste Points: <?php echo $waste_points; ?></p>
+    <p><strong>Total Overall Points:</strong> <?php echo $overall_points; ?></p>
     <form action="menu.php" method="post">
         <button type="submit" class="btn-newQ">Start New Game</button>
     </form>
     <script>sessionStorage.removeItem("timeLeft");</script>
 </body>
+
 </html>

@@ -43,38 +43,33 @@ function getLeaderboard() {
 }
 
 // Save/update score for a user and a game ('quiz' or 'waste'), always update overall
-function saveScore($nickname, $score, $gameType) {
+function saveScore($nickname, $score, $topic) {
     $filename = 'leaderboard.txt';
-    $leaderboard = [];
+    $data = [];
 
-    // Load existing data
     if (file_exists($filename)) {
         $lines = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($lines as $line) {
-            $parts = explode('|', $line);
-            $name = $parts[0];
-            $leaderboard[$name] = [
-                'quiz' => isset($parts[1]) ? (int)$parts[1] : 0,
-                'waste' => isset($parts[2]) ? (int)$parts[2] : 0,
-                'overall' => isset($parts[3]) ? (int)$parts[3] : 0
-            ];
+            list($name, $quiz, $waste) = explode('|', $line);
+            $data[$name] = ['quiz' => $quiz, 'waste' => $waste];
         }
     }
 
-    // If user not in leaderboard, initialize
-    if (!isset($leaderboard[$nickname])) {
-        $leaderboard[$nickname] = ['quiz' => 0, 'waste' => 0, 'overall' => 0];
+    if (!isset($data[$nickname])) {
+        $data[$nickname] = ['quiz' => 0, 'waste' => 0];
     }
 
-    // Update score
-    $leaderboard[$nickname][$gameType] = $score;
-    $leaderboard[$nickname]['overall'] = $leaderboard[$nickname]['quiz'] + $leaderboard[$nickname]['waste'];
+    $data[$nickname][$topic] += $score;
 
-    // Save back to file
-    $fp = fopen($filename, 'w');
-    foreach ($leaderboard as $name => $scores) {
-        $line = implode('|', [$name, $scores['quiz'], $scores['waste'], $scores['overall']]);
-        fwrite($fp, $line . PHP_EOL);
+    // Recalculate total
+    $overall = $data[$nickname]['quiz'] + $data[$nickname]['waste'];
+
+    // Save back
+    $lines = [];
+    foreach ($data as $name => $scores) {
+        $lines[] = "$name|{$scores['quiz']}|{$scores['waste']}|$overall";
     }
-    fclose($fp);
+
+    file_put_contents($filename, implode(PHP_EOL, $lines));
 }
+

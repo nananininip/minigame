@@ -101,11 +101,12 @@ $question = $questions[$currentIndex];
                 <div class="card-body">
                     <p style="font-weight:bold;"><?php echo htmlspecialchars($question['question']); ?></p>
                     <?php foreach ($question['choices'] as $choice): ?>
-                        <label>
-                            <input type="radio" name="answer" value="<?php echo htmlspecialchars($choice); ?>" required>
+                        <button type="button" class="answer-btn" data-answer="<?php echo htmlspecialchars($choice); ?>">
                             <?php echo htmlspecialchars($choice); ?>
-                        </label><br>
+                        </button>
                     <?php endforeach; ?>
+                    <input type="hidden" name="answer" id="selectedAnswer" required>
+
                 </div>
             </div>
             <button class="btn-submit" type="submit">
@@ -117,6 +118,46 @@ $question = $questions[$currentIndex];
         </div>
     </form>
     <script src="timer.js"></script>
+    <script>
+    const answerButtons = document.querySelectorAll('.answer-btn');
+    const hiddenInput = document.getElementById('selectedAnswer');
+    const correctAnswer = <?php echo json_encode(trim($question['answer'])); ?>;
+    const submitBtn = document.querySelector('.btn-submit');
+
+    // Initially disable the submit button until an answer is clicked
+    submitBtn.disabled = true;
+
+    answerButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Disable all buttons to prevent multiple answers
+            answerButtons.forEach(b => {
+                b.disabled = true;
+                if (b.dataset.answer.trim() === correctAnswer) {
+                    b.classList.add('correct');
+                }
+            });
+
+            // Set the selected answer in hidden input
+            hiddenInput.value = btn.dataset.answer;
+
+            // Mark wrong if selected one is not correct
+            if (btn.dataset.answer.trim() !== correctAnswer) {
+                btn.classList.add('wrong');
+            }
+
+            // Enable the Next/Finish button now
+            submitBtn.disabled = false;
+
+            // If it's the last question, submit after 1 second
+            <?php if ($currentIndex + 1 == count($questions)): ?>
+                setTimeout(() => {
+                    document.querySelector("form").submit();
+                }, 1000);
+            <?php endif; ?>
+        });
+    });
+</script>
+
 </body>
 
 </html>
