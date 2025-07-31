@@ -28,13 +28,13 @@ if (!isset($_SESSION['quiz_sequence'])) {
 
 // Handle form submission (answering one question)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $selected = isset($_POST['answer']) ? trim($_POST['answer']) : '';
+    $selected = $_POST['answer'] ?? '';
     $currentIndex = $_SESSION['quiz_current'];
     $questions = $_SESSION['quiz_sequence'];
     $question = $questions[$currentIndex];
 
-    // Check answer
-    if ($selected == trim($question['answer'])) {
+    // Check if answer is correct
+    if ($selected == $question['answer']) {
         $_SESSION['correct']++;
     } else {
         $_SESSION['incorrect']++;
@@ -42,21 +42,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $_SESSION['quiz_current']++;
 
-    // If finished all questions
+    // Redirect to results page if quiz completed
     if ($_SESSION['quiz_current'] >= count($questions)) {
-        // 1 point per correct answer, 0 for incorrect
-        $currentGameScore = $_SESSION['correct'];
-        $nickname = $_SESSION['nickname'];
-        saveScore($nickname, $currentGameScore, $topic);
-        $_SESSION['overall_points'] = getLeaderboard()[$nickname]['overall'];
+        $_SESSION['points_this_quiz'] = $_SESSION['correct'];
+        $_SESSION['overall_points'] += $_SESSION['points_this_quiz'];
 
-        // Cleanup for next quiz
-        unset($_SESSION['quiz_sequence']);
-        unset($_SESSION['quiz_current']);
-        header('Location: result.php'); // Go to results
+        // Save results to leaderboard
+        saveScore($_SESSION['nickname'], $_SESSION['correct'], $_SESSION['incorrect'], $_SESSION['overall_points']);
+
+        header('Location: result.php');
         exit();
     }
 }
+
 
 // Determine which question to show
 $currentIndex = $_SESSION['quiz_current'];
@@ -117,46 +115,45 @@ $question = $questions[$currentIndex];
             </div>
         </div>
     </form>
-    <script src="timer.js"></script>
     <script>
-    const answerButtons = document.querySelectorAll('.answer-btn');
-    const hiddenInput = document.getElementById('selectedAnswer');
-    const correctAnswer = <?php echo json_encode(trim($question['answer'])); ?>;
-    const submitBtn = document.querySelector('.btn-submit');
+        const answerButtons = document.querySelectorAll('.answer-btn');
+        const hiddenInput = document.getElementById('selectedAnswer');
+        const correctAnswer = <?php echo json_encode(trim($question['answer'])); ?>;
+        const submitBtn = document.querySelector('.btn-submit');
 
-    // Initially disable the submit button until an answer is clicked
-    submitBtn.disabled = true;
+        // Initially disable submit button
+        submitBtn.disabled = true;
 
-    answerButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Disable all buttons to prevent multiple answers
-            answerButtons.forEach(b => {
-                b.disabled = true;
-                if (b.dataset.answer.trim() === correctAnswer) {
-                    b.classList.add('correct');
+        answerButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (hiddenInput.value !== "") return; // Prevent re-selection
+
+                hiddenInput.value = btn.dataset.answer.trim();
+
+                // Highlight correct/wrong answers
+                answerButtons.forEach(b => {
+                    b.disabled = true; // disable all buttons after selection
+                    if (b.dataset.answer.trim() === correctAnswer) {
+                        b.classList.add('correct');
+                    }
+                });
+
+                if (btn.dataset.answer.trim() !== correctAnswer) {
+                    btn.classList.add('wrong');
                 }
+
+                // Enable submit button after selection
+                submitBtn.disabled = false;
+
+                // Automatically submit last question after 1.5 seconds
+                <?php if ($currentIndex + 1 == count($questions)): ?>
+                    setTimeout(() => document.querySelector("form").submit(), 1500);
+                <?php endif; ?>
             });
-
-            // Set the selected answer in hidden input
-            hiddenInput.value = btn.dataset.answer;
-
-            // Mark wrong if selected one is not correct
-            if (btn.dataset.answer.trim() !== correctAnswer) {
-                btn.classList.add('wrong');
-            }
-
-            // Enable the Next/Finish button now
-            submitBtn.disabled = false;
-
-            // If it's the last question, submit after 1 second
-            <?php if ($currentIndex + 1 == count($questions)): ?>
-                setTimeout(() => {
-                    document.querySelector("form").submit();
-                }, 1000);
-            <?php endif; ?>
         });
-    });
-</script>
+    </script>
+    <script src="timer.js"></script>
+
 
 </body>
 
