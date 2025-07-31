@@ -1,39 +1,306 @@
-:root { --green: #7acb96; --blue: #8ad9e8; --bg: #f2ece2; }
-body { font-family: 'Prompt', sans-serif; background: var(--bg); color: #333; margin: 0; }
-.progress-wrap {
-  position: fixed; top:0; left:0; width:100%; height:12px;
-  background:rgba(0,0,0,0.1); border-bottom-left-radius:6px; border-bottom-right-radius:6px; z-index:10;
-}
-.progress { width:0%; height:100%; background: linear-gradient(to right, var(--green), var(--blue)); transition: width 0.4s;}
-.game-card { margin: 50px auto 0 auto; background: #fff; max-width: 430px; padding: 2rem 1.2rem 2.5rem; border-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align:center;}
-.waste-item-img { width: 96px; height: 96px; display:block; margin:0 auto 1.4rem auto; }
-.question { font-size: 1.14rem; margin-bottom: 1.15rem; font-weight: 600; }
-.timer { margin: 0.5rem auto 1.3rem auto; display: flex; justify-content: center; align-items: center; gap: 0.5rem; font-size: 1rem; color: #333; }
-.timer span { font-weight: bold; }
-.bins-row {
-  display: flex; gap: 0.6rem; justify-content: center; margin: 2rem 0 1rem 0;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-.bin-drop {
-  background: #f6f6f6; border-radius: 16px; width: 100px; height: 140px; position:relative; cursor: pointer; border: 2.5px solid #e0e0e0; transition: border-color .12s, background .12s;
-  display:flex; flex-direction:column; align-items:center; justify-content: flex-end; padding-bottom: 12px;
+:root {
+  --green: #7acb96;
+  --blue: #8ad9e8;
+  --bg: #f2ece2;
 }
+
+
+html, body {
+  overflow-x: hidden;
+}
+
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background-image: url('waste/assets/background.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-attachment: fixed;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.game-title {
+  margin-top: 6rem;
+  font-size: 6rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+/* === Progress Bar === */
+.progress-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 24px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  z-index: 10;
+}
+
+/* Base green-blue background */
+.progress-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to right, var(--green), var(--blue));
+}
+
+/* Overlay gray mask */
+.progress-mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 0%;
+  background-color: var(--bg); /* เทาสว่างแบบพื้นหลัง */
+  transition: width 0.4s linear;
+}
+
+/* Game card */
+.game-card {
+  margin: 1.5rem auto;
+  background: #fff;
+  width: calc(200vw - 20px);    /* ขอบข้างละ 10px */
+  max-width: 1600px;
+  height: 70vh;                 /* ควบคุมให้ความสูงไม่เปลี่ยน */
+  overflow-y: hidden;            /* ถ้าขยะสูงเกินก็เลื่อนภายใน */
+  padding: 1rem 1rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* เริ่มที่หัวข้อด้านบน */
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
+.waste-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;  /* กระจายเท่ากันในแนวตั้ง */
+  height: 100%;
+  width: 100%;
+}
+
+.question {
+  font-size: 4.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Timer */
+.timer {
+  margin: 0.5rem auto 1.3rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.timer span {
+  font-weight: bold;
+}
+
+#timerNum {
+  font-size: 3.4rem;
+  font-weight: bold;
+}
+
+/* === Waste Items and Bins Layout === */
+.waste-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  margin-top: 1.5rem;
+  width: clamp(200px, 50vw, 280px);
+}
+
+.bins-row, #bins {
+  display: flex;
+  flex-wrap: nowrap; 
+  justify-content: center; 
+  align-items: flex-end;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  padding: 0 1rem;
+  margin: 1rem auto 1rem auto;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+.bin-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 320px;
+  flex: 1;
+}
+
+.draggable,
+.draggable-item {
+  width: clamp(240px, 50vw, 300px);
+  margin: 50px;
+  height: auto;
+  cursor: grab;
+  display: block;
+  margin: 0 auto;
+}
+
+.draggable-item img {
+  width: clamp(240px, 50vw, 300px);
+  max-width: 300px;
+  height: auto;
+}
+
+.drag-instruction {
+  font-size: 2.4rem;
+  color: #555;
+  margin-top: 2.4rem;
+  margin-bottom: 2.4rem;
+  text-align: center;
+}
+
+/* === Drop Bins === */
+.bin-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  /* ทำให้แนวตั้งอยู่กลาง */
+  padding: 20px 1rem;
+  width: clamp(220px, 22vw, 320px);    
+  height: clamp(280px, 10vw, 340px);
+  background: #f6f6f6;
+  border-radius: 24px;
+  border: 6px solid #e0e0e0;
+  transition: border-color 0.12s, background 0.12s;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+.bin-body, .bin-lid {
+  max-width: 84%;
+  object-fit: contain;
+  margin-top: auto;
+}
+
 .bin-drop .bin-lid {
-  position:absolute; top:2px; left:50%; transform:translateX(-50%) rotate(0deg); width:90px; z-index:2;
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%) rotate(0deg);
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  margin: 0 auto;
+  z-index: 3;
   transition: transform 0.35s cubic-bezier(.37,1.63,.34,.98);
   transform-origin: 50% 100%;
+  margin-top: 5px;
+  margin-bottom: 30px;
 }
+
 .bin-drop.open .bin-lid {
-  /* Rotate open -55deg */
-  transform:translateX(-50%) rotate(-55deg);
+  transform: translateX(-50%) rotate(-55deg);
 }
+
 .bin-drop .bin-body {
-  position:absolute; top:36px; left:50%; transform:translateX(-50%); width:86px; z-index:1;
+  position: absolute;
+  bottom: 0px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(200px, 90%, 280px); /* ไม่เกิน box */
+  height: auto;
+  z-index: 1;
+  margin-top: 0; /* ลบ margin บนออก */
 }
-.bin-drop .bin-label { margin-top: 90px; font-size: 0.98rem; color: #333; text-align: center; z-index:3; }
-.bin-drop.drag-over { border-color: var(--blue); }
-.bin-drop.wrong { border-color: #e35656 !important; background: #ffeaea; }
-.result { margin-top: 1.7rem; font-size: 1.15rem; }
-.scoreboard-link { display:inline-block; margin-top: 1.3rem; background:var(--green); color:#fff; padding:0.5rem 1.5rem; border-radius:16px; text-decoration:none; font-weight:bold; transition:background .2s;}
-.scoreboard-link:hover { background: #69ba7c; }
-.start-btn { padding: 0.75rem 2.2rem; background:var(--green); color:#fff; border-radius:10px; border:none; font-weight:600; margin-top:1.2rem; font-size:1.06rem; cursor:pointer;}
+
+.bin-drop.drag-over {
+  border-color: var(--blue);
+}
+
+.bin-drop.correct {
+  border-color: #4caf50 !important;
+  background-color: #e6f5ea !important;
+}
+
+.bin-drop.incorrect {
+  border-color: #e35656 !important;
+  background-color: #ffeaea !important;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.bin-drop.drag-over {
+  animation: bounce 0.4s ease;
+  background-color: #f0f8ff;
+  border-color: #4dc9ff;
+  box-shadow: 0 0 10px rgba(77, 201, 255, 0.6);
+}
+
+/* === Result Display === */
+.result {
+  margin-top: 2rem;
+  margin: 1.5rem auto 2rem;
+  font-size: 2.8rem;
+  color: #333;
+  font-weight: bold;
+}
+
+/* === Buttons === */
+.start-btn {
+  padding: 0.75rem 2.2rem;
+  background: var(--green);
+  color: #fff;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  margin-top: 1.2rem;
+  font-size: 1.06rem;
+  cursor: pointer;
+}
+
+.scoreboard-link {
+  display: inline-block;
+  margin-top: 1.3rem;
+  background: var(--green);
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.scoreboard-link:hover {
+  background: #69ba7c;
+}
