@@ -1,45 +1,45 @@
 <?php
 session_start();
-$score = isset($_GET['score']) ? intval($_GET['score']) : 0;
-$wrong = isset($_GET['wrong']) ? intval($_GET['wrong']) : 0;
+require 'functions.php';
+
+if (!isset($_SESSION['nickname'])) {
+    header('Location: index.php');
+    exit();
+}
+
+// Quiz score: from session (or query string as fallback)
+$quizScore = isset($_SESSION['score']) ? $_SESSION['score'] : (isset($_GET['score']) ? intval($_GET['score']) : 0);
+$nickname = $_SESSION['nickname'];
 ?>
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
-    <title>Quiz Result</title>
+    <title>ผลคะแนนรวม</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="navbar">
-        <span class="navbar-brand">Quiz Result</span>
-    </div>
     <div class="result-card">
-        <h2>คะแนนของคุณ: <span class="highlight"><?php echo $score; ?></span></h2>
-        <div style="margin-bottom: 12px;">
-            <span style="color:#219a2a;font-weight:700;">ถูกต้อง: <?php echo $score; ?> ข้อ</span>
-            &nbsp; | &nbsp;
-            <span style="color:#e43c3c;font-weight:700;">ผิด: <?php echo $wrong; ?> ข้อ</span>
-        </div>
-        <?php
-        if ($score == 5) {
-            $msg = "เยี่ยมมาก! คุณตอบถูกทุกข้อ 🎉";
-        } elseif ($score >= 3) {
-            $msg = "เก่งมาก! ลองเล่นอีกครั้งเพื่อคะแนนที่สมบูรณ์!";
-        } else {
-            $msg = "อย่ายอมแพ้! ฝึกฝนต่อไปนะ!";
-        }
-        ?>
-        <div style="margin-bottom:16px;font-weight:600;"><?php echo $msg; ?></div>
-        <p>คุณต้องการเล่นเกมถัดไปหรือไม่?</p>
-        <div class="menu-buttons">
-            <a href="/minigame/game/waste.html" class="btn-main">ไปเล่นเกมถัดไป</a>
-            <a href="menu.php" class="btn-alt">กลับสู่เมนูหลัก</a>
-        </div>
+        <h1>คะแนนของคุณ</h1>
+        <div>ชื่อผู้เล่น: <strong><?php echo htmlspecialchars($nickname); ?></strong></div>
+        <div>คะแนน Quiz: <span id="quiz-score"><?php echo $quizScore; ?></span></div>
+        <div>คะแนน Waste Game: <span id="waste-score"></span></div>
+        <div><b>คะแนนรวม:</b> <span id="total-score"></span></div>
+        <br>
+        <a href="leaderboard.php" class="btn-main">ดูอันดับ</a>
+        <a href="menu.php" class="btn-alt">กลับเมนู</a>
     </div>
-
+    <script>
+    // Get waste_score from localStorage (from waste.html's script)
+    window.onload = function() {
+        let waste = localStorage.getItem('waste_score') || 0;
+        document.getElementById('waste-score').textContent = waste;
+        let quiz = <?php echo $quizScore; ?>;
+        let total = parseInt(quiz) + parseInt(waste);
+        document.getElementById('total-score').textContent = total;
+        // Optional: clear waste_score if you want to reset for next game
+        // localStorage.removeItem('waste_score');
+    };
+    </script>
 </body>
-
 </html>

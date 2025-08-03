@@ -204,6 +204,13 @@ function showFinalScore() {
 
   const resultEl = document.getElementById('wasteResult');
   if (resultEl) resultEl.innerHTML = '';
+
+    // --- Add this block at the end of showFinalScore() ---
+  setTimeout(() => {
+    localStorage.setItem('waste_score', score);
+    window.location.href = "/minigame/quiz/result.php"; // Adjust path if needed
+  }, 2600); // 2.6 seconds delay so user sees the result
+
 }
 
 
