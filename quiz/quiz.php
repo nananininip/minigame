@@ -93,11 +93,11 @@ if ($quizOver || $_SESSION['quiz_current'] >= $numQuestions) {
     <script src="timer.js"></script>
 </head>
 <body>
-    <div class="navbar"><span class="navbar-brand">Mini Quiz Game</span>
+    <!-- <div class="navbar"><span class="navbar-brand">Mini Quiz Game</span>
         <form action="exit.php" method="post" style="display:inline;">
             <button type="submit" class="btn-exit">ออก</button>
         </form>
-    </div>
+    </div> -->
     <div class="progress-bar-bg">
         <div id="timerBar" class="progress-bar"></div>
     </div>

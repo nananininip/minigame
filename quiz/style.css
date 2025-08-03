@@ -1,6 +1,7 @@
 /* General resets */
 * {
 	box-sizing: border-box;
+	overflow: hidden;
 }
 
 body {
