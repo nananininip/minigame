@@ -1,64 +1,51 @@
+let totalDuration = 50; // seconds
+let timeLeft = totalDuration;
 let quizCountdown;
-const totalDuration = 50; // Total seconds
-let timeLeft = sessionStorage.getItem("timeLeft")
-  ? parseInt(sessionStorage.getItem("timeLeft"))
-  : totalDuration;
 
-const form = document.querySelector("form");
-const timerBar = document.getElementById("timerBar");
-const timeLeftDisplay = document.getElementById("timeLeft");
+// Restore time from previous session (if any)
+if (sessionStorage.getItem("timeLeft")) {
+    timeLeft = parseInt(sessionStorage.getItem("timeLeft"));
+} else {
+    sessionStorage.setItem("timeLeft", timeLeft);
+}
 
-// Initialize UI
-updateGlobalTimerUI(timeLeft, totalDuration);
-startGlobalTimer(timeLeft);
+// Update timer bar and label
+function updateGlobalTimerUI(remaining, total) {
+    document.getElementById("timeLeft").textContent = remaining;
+    const percent = (remaining / total) * 100;
+    const bar = document.getElementById("timerBar");
+    bar.style.width = percent + "%";
+    if (percent <= 20) {
+        bar.style.background = "#f44336";
+    } else if (percent <= 50) {
+        bar.style.background = "#ffc107";
+    } else {
+        bar.style.background = "linear-gradient(90deg, #74c5e4 0%, #62d1a6 100%)";
+    }
+}
 
+// Start timer on load
 function startGlobalTimer(startAt) {
-  quizCountdown = setInterval(() => {
-    startAt--;
-    sessionStorage.setItem("timeLeft", startAt);
     updateGlobalTimerUI(startAt, totalDuration);
 
-    if (startAt <= 0) {
-      clearInterval(quizCountdown);
-      sessionStorage.removeItem("timeLeft");
-      autoSubmitFinal();
-    }
-  }, 1000);
+    quizCountdown = setInterval(() => {
+        timeLeft--;
+        sessionStorage.setItem("timeLeft", timeLeft);
+        updateGlobalTimerUI(timeLeft, totalDuration);
+
+        if (timeLeft <= 0) {
+            clearInterval(quizCountdown);
+            sessionStorage.removeItem("timeLeft");
+            autoSubmitFinal();
+        }
+    }, 1000);
 }
 
-function updateGlobalTimerUI(remaining, total) {
-  timeLeftDisplay.textContent = remaining;
-  const percent = (remaining / total) * 100;
-  timerBar.style.width = percent + "%";
-
-  // Dynamic Color Change based on time remaining
-  if (percent <= 20) {
-    timerBar.style.backgroundColor = "#dc3545"; // red
-  } else if (percent <= 50) {
-    timerBar.style.backgroundColor = "#ffc107"; // yellow
-  } else {
-    timerBar.style.backgroundColor = "#28a745"; // green
-  }
-}
-
+// When time runs out, redirect to result/exit page
 function autoSubmitFinal() {
-  // Check if answer is selected, if not set "No Answer"
-  const selectedAnswer = document.getElementById("selectedAnswer");
-  if (!selectedAnswer.value) {
-    selectedAnswer.value = "No Answer";
-  }
-
-  // Disable buttons to prevent manual submission
-  document.querySelectorAll(".answer-btn").forEach(btn => (btn.disabled = true));
-  document.querySelector(".btn-submit").disabled = true;
-
-  // Inform user clearly and submit automatically
-  alert("⏰ หมดเวลา! ระบบจะส่งคำตอบให้อัตโนมัติค่ะ");
-  form.submit();
+    window.location.href = "quiz.php?timeout=1";
 }
 
-// Prevent double submission
-form.addEventListener("submit", () => {
-  clearInterval(quizCountdown);
-  sessionStorage.removeItem("timeLeft");
-});
+window.onload = function() {
+    startGlobalTimer(timeLeft);
+}

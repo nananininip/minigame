@@ -7,154 +7,135 @@ if (!isset($_SESSION['nickname'])) {
     exit();
 }
 
-$topic = isset($_GET['topic']) ? $_GET['topic'] : 'quiz';
-$_SESSION['game_type'] = $topic;
+$topic = 'quiz';
+$numQuestions = 5;
+$totalTime = 50;
 
-
-// Initialize overall points if not set
-if (!isset($_SESSION['overall_points'])) {
-    $_SESSION['overall_points'] = 0;
-}
-
-// === INITIALIZE THE QUIZ SEQUENCE ===
 if (!isset($_SESSION['quiz_sequence'])) {
-    $questions = getQuestions($topic); // This returns an array
-    shuffle($questions); // Randomize order
-    $_SESSION['quiz_sequence'] = $questions;
-    $_SESSION['quiz_current'] = 0; // Start at first question
-    $_SESSION['correct'] = 0;
-    $_SESSION['incorrect'] = 0;
+    $_SESSION['quiz_sequence'] = getQuestions($topic, $numQuestions);
+    $_SESSION['quiz_current'] = 0;
+    $_SESSION['score'] = 0;
+    $_SESSION['start_time'] = time();
+    $_SESSION['waste_score'] = 0;
 }
 
-// Handle form submission (answering one question)
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $selected = $_POST['answer'] ?? '';
-    $currentIndex = $_SESSION['quiz_current'];
-    $questions = $_SESSION['quiz_sequence'];
-    $question = $questions[$currentIndex];
-
-    // Check if answer is correct
-    if ($selected == $question['answer']) {
-        $_SESSION['correct']++;
-    } else {
-        $_SESSION['incorrect']++;
-    }
-
-    $_SESSION['quiz_current']++;
-
-    // Redirect to results page if quiz completed
-    if ($_SESSION['quiz_current'] >= count($questions)) {
-        $_SESSION['points_this_quiz'] = $_SESSION['correct'];
-        $_SESSION['overall_points'] += $_SESSION['points_this_quiz'];
-
-        // Save results to leaderboard
-        saveScore($_SESSION['nickname'], $_SESSION['correct'], $_SESSION['incorrect'], $_SESSION['overall_points']);
-
-        header('Location: result.php');
-        exit();
-    }
-}
-
-
-// Determine which question to show
-$currentIndex = $_SESSION['quiz_current'];
 $questions = $_SESSION['quiz_sequence'];
-$question = $questions[$currentIndex];
+$currentIndex = $_SESSION['quiz_current'];
+
+// Helper
+function save_leaderboard_now() {
+    $nickname = $_SESSION['nickname'];
+    $quiz_score = isset($_SESSION['score']) ? $_SESSION['score'] : 0;
+    $waste_score = isset($_SESSION['waste_score']) ? $_SESSION['waste_score'] : 0;
+    $overall = $quiz_score + $waste_score;
+    $time_used = time() - $_SESSION['start_time'];
+    saveResultToLeaderboard($nickname, $quiz_score, $waste_score, $overall, $time_used);
+    return [$quiz_score, $waste_score];
+}
+
+if (!isset($questions[$currentIndex])) {
+    list($quiz_score, $waste_score) = save_leaderboard_now();
+    $numWrong = $numQuestions - $quiz_score;
+    unset($_SESSION['quiz_sequence'], $_SESSION['quiz_current'], $_SESSION['score'], $_SESSION['start_time'], $_SESSION['quiz_current_answered']);
+    header("Location: result.php?score=$quiz_score&wrong=$numWrong");
+    exit();
+}
+
+$currentQuestion = $questions[$currentIndex];
+$choices = $currentQuestion['choices'];
+$correctIndex = $currentQuestion['correct_index'];
+$selectedAnswer = null;
+$feedback = "";
+$showNext = false;
+$quizOver = false;
+
+$elapsed = time() - $_SESSION['start_time'];
+$timeLeft = $totalTime - $elapsed;
+if ($timeLeft <= 0) {
+    $quizOver = true;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$quizOver) {
+    $selectedAnswer = isset($_POST['answer']) ? intval($_POST['answer']) : null;
+    $_SESSION['quiz_current_answered'][$currentIndex] = $selectedAnswer;
+    if ($selectedAnswer === $correctIndex) {
+        $_SESSION['score']++;
+        $feedback = "ถูกต้อง!";
+    } else {
+        $feedback = "ผิด! คำตอบที่ถูกต้องคือ: " . htmlspecialchars($choices[$correctIndex]);
+    }
+    $showNext = true;
+}
+
+if (isset($_POST['next'])) {
+    $_SESSION['quiz_current']++;
+    if ($_SESSION['quiz_current'] >= $numQuestions) {
+        $quizOver = true;
+    }
+    header("Location: quiz.php");
+    exit();
+}
+
+if ($quizOver || $_SESSION['quiz_current'] >= $numQuestions) {
+    list($quiz_score, $waste_score) = save_leaderboard_now();
+    $numWrong = $numQuestions - $quiz_score;
+    unset($_SESSION['quiz_sequence'], $_SESSION['quiz_current'], $_SESSION['score'], $_SESSION['start_time'], $_SESSION['quiz_current_answered']);
+    header("Location: result.php?score=$quiz_score&wrong=$numWrong");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
-    <title>MiniGame - Quiz</title>
+    <title>Quiz Game</title>
     <link rel="stylesheet" href="style.css">
+    <script src="timer.js"></script>
 </head>
-
 <body>
-    <nav class="navbar">
-        <a class="navbar-brand" href="menu.php">Quiz</a>
-        <div class="navbar-buttons">
-            <form action="exit.php" method="post" style="display: inline;">
-                <button type="submit" class="btn-exit">Exit</button>
-            </form>
-            <form action="menu.php" method="post" style="display: inline;">
-                <button type="submit" class="btn-submit" style="right: 110px; position: relative;">Menu</button>
-            </form>
-        </div>
-    </nav>
-    <form method="post">
-        <div class="container" style="margin-top:40px">
-            <h1><?php echo ucfirst($topic); ?> Quiz</h1>
-            <div id="timerBarContainer"
-                style="width: 100%; background-color: #ddd; height: 12px; border-radius: 10px; margin-bottom: 20px;">
-                <div id="timerBar"
-                    style="width: 100%; height: 100%; background-color: #28a745; border-radius: 10px; transition: width 0.2s;">
+    <div class="navbar"><span class="navbar-brand">Mini Quiz Game</span>
+        <form action="exit.php" method="post" style="display:inline;">
+            <button type="submit" class="btn-exit">ออก</button>
+        </form>
+    </div>
+    <div class="progress-bar-bg">
+        <div id="timerBar" class="progress-bar"></div>
+    </div>
+    <div class="timer-label">เวลาที่เหลือ: <span id="timeLeft"><?php echo $timeLeft; ?></span> วินาที</div>
+    <div class="quiz-container">
+        <form id="quizForm" method="post" action="quiz.php" autocomplete="off">
+            <div class="quiz-card">
+                <div class="question">
+                    <span class="highlight">ข้อ <?php echo $currentIndex + 1; ?></span> / <?php echo $numQuestions; ?><br>
+                    <?php echo htmlspecialchars($currentQuestion['question']); ?>
                 </div>
-            </div>
-            <div style="text-align:right; font-size:14px; color:#555; margin-bottom:10px;">
-                เหลือเวลา <span id="timeLeft">50</span> วินาที
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <p style="font-weight:bold;"><?php echo htmlspecialchars($question['question']); ?></p>
-                    <?php foreach ($question['choices'] as $choice): ?>
-                        <button type="button" class="answer-btn" data-answer="<?php echo htmlspecialchars($choice); ?>">
+                <div class="choices">
+                    <?php foreach ($choices as $i => $choice): ?>
+                        <?php
+                        $btnClass = 'choice-btn';
+                        if ($showNext && $selectedAnswer !== null) {
+                            if ($i == $selectedAnswer && $i == $correctIndex)
+                                $btnClass .= ' correct';
+                            else if ($i == $selectedAnswer && $i != $correctIndex)
+                                $btnClass .= ' wrong';
+                            else if ($i == $correctIndex)
+                                $btnClass .= ' correct';
+                        }
+                        ?>
+                        <button type="submit" name="answer" value="<?php echo $i; ?>"
+                            class="<?php echo $btnClass; ?>" <?php echo ($showNext ? 'disabled' : ''); ?>>
                             <?php echo htmlspecialchars($choice); ?>
                         </button>
                     <?php endforeach; ?>
-                    <input type="hidden" name="answer" id="selectedAnswer" required>
-
                 </div>
-            </div>
-            <button class="btn-submit" type="submit">
-                <?php echo ($currentIndex + 1 == count($questions)) ? 'Finish' : 'Next'; ?>
-            </button>
-            <div style="margin-top:10px; color:#666;">
-                คำถาม <?php echo $currentIndex + 1; ?> / <?php echo count($questions); ?>
-            </div>
-        </div>
-    </form>
-    <script>
-        const answerButtons = document.querySelectorAll('.answer-btn');
-        const hiddenInput = document.getElementById('selectedAnswer');
-        const correctAnswer = <?php echo json_encode(trim($question['answer'])); ?>;
-        const submitBtn = document.querySelector('.btn-submit');
-
-        // Initially disable submit button
-        submitBtn.disabled = true;
-
-        answerButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (hiddenInput.value !== "") return; // Prevent re-selection
-
-                hiddenInput.value = btn.dataset.answer.trim();
-
-                // Highlight correct/wrong answers
-                answerButtons.forEach(b => {
-                    b.disabled = true; // disable all buttons after selection
-                    if (b.dataset.answer.trim() === correctAnswer) {
-                        b.classList.add('correct');
-                    }
-                });
-
-                if (btn.dataset.answer.trim() !== correctAnswer) {
-                    btn.classList.add('wrong');
-                }
-
-                // Enable submit button after selection
-                submitBtn.disabled = false;
-
-                // Automatically submit last question after 1.5 seconds
-                <?php if ($currentIndex + 1 == count($questions)): ?>
-                    setTimeout(() => document.querySelector("form").submit(), 1500);
+                <?php if ($showNext && $selectedAnswer !== null): ?>
+                    <div class="feedback <?php echo ($selectedAnswer === $correctIndex) ? 'feedback-correct' : 'feedback-wrong'; ?>">
+                        <?php echo $feedback; ?>
+                    </div>
+                    <button type="submit" name="next" class="btn-next">ข้อต่อไป</button>
                 <?php endif; ?>
-            });
-        });
-    </script>
-    <script src="timer.js"></script>
-
-
+            </div>
+        </form>
+    </div>
 </body>
-
 </html>

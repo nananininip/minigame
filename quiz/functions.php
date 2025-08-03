@@ -1,14 +1,10 @@
 <?php
-
-// Load 4 random questions from a given topic
-function getQuestions($topic) {
-    $file = 'questions.txt';
+function getQuestions($topic, $num = 5) {
+    $file = __DIR__ . '/questions.txt';
     $questions = [];
-
     if (!file_exists($file)) {
         throw new Exception("Questions file not found.");
     }
-
     $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
     foreach ($lines as $line) {
@@ -21,78 +17,113 @@ function getQuestions($topic) {
             $questions[] = [
                 'question' => $question,
                 'choices' => [$choice1, $choice2, $choice3],
-                'answer' => $correct
+                'correct' => $correct
             ];
         }
     }
+    shuffle($questions);
 
-    if (count($questions) < 4) {
+    if (count($questions) < $num) {
         throw new Exception("Not enough questions available for this topic.");
     }
 
-    shuffle($questions);
-    return array_slice($questions, 0, 4);
+    $selected = array_slice($questions, 0, $num);
+
+    // Lock correct answer index after shuffling
+    foreach ($selected as &$q) {
+        $choices = $q['choices'];
+        shuffle($choices);
+        $q['choices'] = $choices;
+        $q['correct_index'] = array_search($q['correct'], $choices);
+    }
+    return $selected;
 }
 
-// Get current leaderboard scores from file
-function getLeaderboard() {
-    $file = 'leaderboard.txt';
+
+function saveResultToLeaderboard($nickname, $quiz, $waste, $overall, $time_used) {
+    $file = __DIR__ . '/leaderboard.txt';
     $leaderboard = [];
 
     if (file_exists($file)) {
         $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($lines as $line) {
-            $parts = explode('|', $line);
-            $nickname = trim($parts[0]);
-            $quiz = isset($parts[1]) ? (int)trim($parts[1]) : 0;
-            $waste = isset($parts[2]) ? (int)trim($parts[2]) : 0;
-            $overall = $quiz + $waste;  // recalculate every time
-            $leaderboard[$nickname] = [
-                'quiz' => $quiz,
-                'waste' => $waste,
-                'overall' => $overall
+            $fields = explode('|', $line);
+            if (count($fields) < 5) continue;
+            list($name, $q, $w, $o, $t) = $fields;
+            $leaderboard[] = [
+                'nickname' => $name,
+                'quiz' => (int)$q,
+                'waste' => (int)$w,
+                'overall' => (int)$o,
+                'time_used' => (int)$t
             ];
         }
     }
 
+    $found = false;
+    foreach ($leaderboard as &$entry) {
+        if ($entry['nickname'] == $nickname) {
+            $found = true;
+            // Always use latest (or pick your own logic)
+            $entry['quiz'] = $quiz;
+            $entry['waste'] = $waste;
+            $entry['overall'] = $overall;
+            $entry['time_used'] = $time_used;
+        }
+    }
+    if (!$found) {
+        $leaderboard[] = [
+            'nickname' => $nickname,
+            'quiz' => $quiz,
+            'waste' => $waste,
+            'overall' => $overall,
+            'time_used' => $time_used
+        ];
+    }
+
+    // Sort, as you wish
+    usort($leaderboard, function($a, $b) {
+        if ($b['overall'] == $a['overall']) {
+            return $a['time_used'] - $b['time_used'];
+        }
+        return $b['overall'] - $a['overall'];
+    });
+    $leaderboard = array_slice($leaderboard, 0, 10);
+
+    $fp = fopen($file, 'w');
+    foreach ($leaderboard as $entry) {
+        fwrite($fp, implode('|', [
+            $entry['nickname'],
+            $entry['quiz'],
+            $entry['waste'],
+            $entry['overall'],
+            $entry['time_used']
+        ]) . "\n");
+    }
+    fclose($fp);
+}
+
+
+function getLeaderboard() {
+    $file = __DIR__ . '/leaderboard.txt';
+    $leaderboard = [];
+
+    if (file_exists($file)) {
+        $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            $fields = explode('|', $line);
+            if (count($fields) < 5) continue;
+            list($name, $quiz, $waste, $overall, $time_used) = $fields;
+            $leaderboard[$name] = [
+                'quiz' => (int)$quiz,
+                'waste' => (int)$waste,
+                'overall' => (int)$overall,
+                'time_used' => (int)$time_used
+            ];
+        }
+    }
+    // You can return all, or slice for top N
     return $leaderboard;
 }
 
-// Save or update user's score properly
-function saveScore($nickname, $score, $topic) {
-    $filename = 'leaderboard.txt';
-    $data = [];
-
-    // Load existing data
-    if (file_exists($filename)) {
-        $lines = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            $parts = explode('|', $line);
-            $name = $parts[0];
-            $quizScore = isset($parts[1]) ? (int)$parts[1] : 0;
-            $wasteScore = isset($parts[2]) ? (int)$parts[2] : 0;
-            $data[$name] = ['quiz' => $quizScore, 'waste' => $wasteScore];
-        }
-    }
-
-    // Update or initialize user's scores
-    if (!isset($data[$nickname])) {
-        $data[$nickname] = ['quiz' => 0, 'waste' => 0];
-    }
-
-    // Increment points according to the game topic
-    if (isset($data[$nickname][$topic])) {
-        $data[$nickname][$topic] += $score;
-    } else {
-        $data[$nickname][$topic] = $score; // safety check
-    }
-
-    // Rewrite the file with correct individual overall scores
-    $lines = [];
-    foreach ($data as $name => $scores) {
-        $overall = $scores['quiz'] + $scores['waste']; // compute per user
-        $lines[] = "{$name}|{$scores['quiz']}|{$scores['waste']}|{$overall}";
-    }
-
-    file_put_contents($filename, implode(PHP_EOL, $lines));
-}
+?>
