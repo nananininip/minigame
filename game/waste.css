@@ -8,6 +8,8 @@
   --green: #7acb96;
   --blue: #8ad9e8;
   --bg: #f2ece2;
+  --bin-size: clamp(160px, 18vw, 220px);
+  --item-size: clamp(180px, 26vw, 240px);
 }
 
 
@@ -15,10 +17,28 @@ html, body {
   overflow-x: hidden;
 }
 
+.logo-container {
+  position: fixed;
+  top: 48px;
+  left: 32px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #ffffff97; 
+  border-radius: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+
+.logo-container img {
+  width: 180px;       
+  height: auto;
+}
 
 body {
   font-family: 'Prompt', sans-serif;
-  background-image: url('waste/assets/background.svg');
+  background-image: url('waste/assets/backgrounds/background.svg');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: bottom center;
@@ -30,8 +50,8 @@ body {
 }
 
 .game-title {
-  margin-top: 6rem;
-  font-size: 6rem;
+  margin-top: 5rem;
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
   font-weight: bold;
   text-align: center;
 }
@@ -74,10 +94,10 @@ body {
 .game-card {
   margin: 1.5rem auto;
   background: #fff;
-  width: calc(200vw - 20px);    /* ขอบข้างละ 10px */
-  max-width: 1600px;
-  height: 70vh;                 /* ควบคุมให้ความสูงไม่เปลี่ยน */
-  overflow-y: hidden;            /* ถ้าขยะสูงเกินก็เลื่อนภายใน */
+  width: 95%;    
+  max-width: 1200px;
+  height: 60vh;                 
+  overflow-y: hidden;            
   padding: 1rem 1rem 2rem;
   border-radius: 24px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
@@ -99,7 +119,7 @@ body {
 }
 
 .question {
-  font-size: 4.4rem;
+  font-size: clamp(3rem, 4vw, 3.4rem);
   font-weight: 600;
   margin-bottom: 1rem;
   text-align: center;
@@ -121,7 +141,7 @@ body {
 }
 
 #timerNum {
-  font-size: 3.4rem;
+  font-size: clamp(3rem, 4vw, 3.4rem);
   font-weight: bold;
 }
 
@@ -132,7 +152,7 @@ body {
   justify-content: center;
   gap: clamp(1rem, 3vw, 2.5rem);
   margin-top: 1.5rem;
-  width: clamp(200px, 50vw, 280px);
+  width: var(--item-size);
 }
 
 .bins-row, #bins {
@@ -160,7 +180,7 @@ body {
 
 .draggable,
 .draggable-item {
-  width: clamp(240px, 50vw, 300px);
+  width: var(--item-size);
   margin: 50px;
   height: auto;
   cursor: grab;
@@ -169,7 +189,7 @@ body {
 }
 
 .draggable-item img {
-  width: clamp(240px, 50vw, 300px);
+  width: clamp(220px, 40vw, 380px);
   max-width: 300px;
   height: auto;
 }
@@ -187,10 +207,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;  /* ทำให้แนวตั้งอยู่กลาง */
+  justify-content: center;  
   padding: 20px 1rem;
-  width: clamp(220px, 22vw, 320px);    
-  height: clamp(280px, 10vw, 340px);
+  width: var(--bin-size);
+  height: clamp(200px, 25vw, 260px);
   background: #f6f6f6;
   border-radius: 24px;
   border: 6px solid #e0e0e0;
@@ -201,14 +221,14 @@ body {
 }
 
 .bin-body, .bin-lid {
-  max-width: 84%;
+  max-width: 90%;
   object-fit: contain;
   margin-top: auto;
 }
 
 .bin-drop .bin-lid {
   position: absolute;
-  top: -40px;
+  top: -20px;
   left: 50%;
   transform: translateX(-50%) rotate(0deg);
   width: 100%;
@@ -269,23 +289,102 @@ body {
 
 /* === Result Display === */
 .result {
-  margin-top: 2rem;
-  margin: 1.5rem auto 2rem;
-  font-size: 2.8rem;
+  margin-top: 1rem;
+  margin: 1rem auto 2rem;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   color: #333;
   font-weight: bold;
 }
 
+.score-summary {
+  font-size: 2.0rem;
+  margin-bottom: 2rem;
+}
+
+.mascot-final-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  padding: 2.5rem 2rem;
+  border-radius: 24px;
+  background: #f8f8f8;
+  max-width: 1000px;
+  margin: 2rem auto;
+}
+
+.mascot-label {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.mascot-label.best {
+  color: #326c12; 
+}
+
+.mascot-label.good {
+  color: #a38916; 
+}
+
+.mascot-label.mid {
+  color: #ba6c1e; 
+}
+
+.mascot-label.rookie {
+  color: #bb3930; 
+}
+
+.mascot-img {
+  flex: 0 0 280px;
+  text-align: center;
+}
+
+.mascot-img img {
+  width: 100%;
+  max-width: 280px;
+}
+
+.mascot-text {
+  font-size: 1.8rem;
+  flex: 1;
+  text-align: left;
+}
+
+.mascot-text h2 {
+  font-size: 2.6rem;
+  margin-bottom: 1rem;
+}
+
+.mascot-text h2 span {
+  font-weight: bold;
+}
+
+.mascot-text h3 {
+  font-size: 2.2rem;
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  color: #555;
+}
+
+.mascot-text p {
+  font-size: 2rem;
+  line-height: 1.8;
+  color: #333;
+}
+
+
 /* === Buttons === */
 .start-btn {
-  padding: 0.75rem 2.2rem;
+
   background: var(--green);
   color: #fff;
   border-radius: 10px;
   border: none;
   font-weight: 600;
   margin-top: 1.2rem;
-  font-size: 1.06rem;
+  font-size: 1rem;
+  padding: 0.6rem 1.6rem;
   cursor: pointer;
 }
 
@@ -294,7 +393,8 @@ body {
   margin-top: 1.3rem;
   background: var(--green);
   color: #fff;
-  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  padding: 0.6rem 1.6rem;
   border-radius: 16px;
   text-decoration: none;
   font-weight: bold;
@@ -303,4 +403,24 @@ body {
 
 .scoreboard-link:hover {
   background: #69ba7c;
+}
+
+@media (max-width: 768px) {
+  .game-card {
+    height: 72vh;
+  }
+
+  .waste-items {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bins-row {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .bin-drop {
+    margin-bottom: 1rem;
+  }
 }

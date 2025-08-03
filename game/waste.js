@@ -44,20 +44,60 @@ const bins = [
   }
 ];
 
+
+const mascots = [
+  {
+    type: 'best',
+    label: 'GREEN GARDIAN',
+    name: 'ดอกเตอร์กรีน',
+    minScore: 1200,
+    svg: 'waste/assets/mascots/green_gardian.svg',
+    description: 'ผู้พิทักษ์ของโรงพยาบาล<br>ช่วยโลกได้อย่างมือโปร!'
+  },
+  {
+    type: 'good',
+    label: 'ECO EXPLORER',
+    name: 'น้องอีโค่',
+    minScore: 750,
+    svg: 'waste/assets/mascots/eco_explorer.svg',
+    description: 'พยาบาลสายแยกขยะ<br>พยายามอีกนิด<br>เป็นนักแยกขั้นเทพแน่นอน!'
+  },
+  {
+    type: 'mid',
+    label: 'WASTE WATCHER',
+    name: 'ผู้ช่วยคลีน',
+    minScore: 500,
+    svg: 'waste/assets/mascots/waste_watcher.svg',
+    description: 'เจ้าหน้าที่จัดการขยะผู้ใจดี<br>เริ่มต้นได้ดีแล้ว<br>แต่ยังมีอะไรให้เรียนรู้อีกเพียบ!'
+  },
+  {
+    type: 'rookie',
+    label: 'ROOKIE RECYCLER',
+    name: 'น้อง Cure',
+    minScore: 0,
+    svg: 'waste/assets/mascots/rookie_recycler.svg',
+    description: 'เด็กฝึกงานสายกรีน<br>เพิ่งเริ่มต้นแต่มีไฟ<br>มาเรียนรู้ไปด้วยกัน!'
+  }
+];
+
+function getMascotByScore(score) {
+  const sorted = mascots.sort((a, b) => b.minScore - a.minScore);
+  return sorted.find(m => score >= m.minScore) || sorted[sorted.length - 1];
+}
+
+
 // const progressEl = document.querySelector('.progress');
 const progressMask = document.getElementById('progressMask') || null;
 const wasteCard = document.getElementById('wasteCard');
 let current = 0, score = 0, correctCount = 0, maxTime = 15, timer = maxTime, timerInterval;
-const scoreMultiplier = 20;
+const scoreMultiplier = 10;
 
-function getPlayerName() {
-  return localStorage.getItem('playerName') || ('Guest' + Math.floor(Math.random() * 9000 + 1000));
-}
 
 function updateProgress(pct) {
-  const filled = 100 - pct; // สีเทาขยับจากขวา
+  const filled = 100 - pct;
   if (progressMask) progressMask.style.width = filled + '%';
 }
+
 
 function handleWasteAnswer(selectedType) {
   const w = wasteItems[current];
@@ -133,31 +173,39 @@ function launchConfetti() {
 
 
 function showFinalScore() {
-  wasteCard.innerHTML = `
-    <div class="result" style="font-size:2.0rem; text-align:center; line-height:1.6;">
+  wasteCard.innerHTML = ''; // ล้างหน้าการ์ดก่อน
+
+  const mascot = getMascotByScore(score);
+
+  const resultHTML = `
+  <div class="result">
+    <div class="score-summary">
       🎉 คุณตอบถูกทั้งหมด <strong>${correctCount}</strong> ข้อ จาก ${wasteItems.length} ข้อ<br>
       🏆 คะแนนรวมทั้งหมด: <strong>${score}</strong> คะแนน
     </div>
-  `;
+
+    <div class="mascot-final-box">
+      <div class="mascot-img">
+        <img src="${mascot.svg}" alt="${mascot.name}" />
+      </div>
+      <div class="mascot-text">
+        <h2 style="font-size: 1.6rem;">🌟 คาแรคเตอร์ของคุณคือ:<br><span class="mascot-label ${mascot.type}">${mascot.label}</span></h2>
+        <h3>${mascot.name}</h3>
+        <p>${mascot.description}</p>
+      </div>
+    </div>
+  </div>
+`;
+
+
+  wasteCard.innerHTML = resultHTML;
 
   launchConfetti();
 
   const resultEl = document.getElementById('wasteResult');
-  resultEl.innerHTML = '';
+  if (resultEl) resultEl.innerHTML = '';
 }
 
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  shuffleArray(wasteItems);
-  showWaste(0);
-});
 
 
 function showWaste(idx) {
@@ -183,8 +231,6 @@ function showWaste(idx) {
     <div id="wasteResult" class="result"></div>
   </div>
 `;
-
-
 
   const binsRow = document.querySelector('.bins-row');
   binsRow.innerHTML = '';
@@ -232,6 +278,23 @@ function showWaste(idx) {
   }, 1000);
 }
 
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  console.log("Shuffled wasteItems:", array); 
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  shuffleArray(wasteItems);
   showWaste(0);
 });
+
+function getMascotByScore(score) {
+  // เรียงจากสูง -> ต่ำ
+  const sorted = mascots.sort((a, b) => b.minScore - a.minScore);
+  return sorted.find(m => score >= m.minScore);
+}
+
