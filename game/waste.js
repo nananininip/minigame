@@ -1,63 +1,103 @@
 const wasteItems = [
-  { name: "Banana", type: 'general', img: 'waste/assets/trash/banana.svg', question: 'เปลือกกล้วยนี้ควรทิ้งถังไหน?' },
-  { name: 'Box', type: 'general', img: 'waste/assets/trash/box.svg', question: 'กล่องกระดาษนี้ควรทิ้งถังไหน?' },
-  { name: 'Candy', type: 'general', img: 'waste/assets/trash/candy.svg', question: 'เปลือกลูกอมนี้ควรทิ้งถังไหน?' },
-  { name: 'Coffee', type: 'general', img: 'waste/assets/trash/coffee.svg', question: 'แก้วกาแฟนี้ควรทิ้งถังไหน?' },
-  { name: 'Cotton_blood', type: 'infected', img: 'waste/assets/trash/cotton_blood.svg', question: 'สำลีใช้แล้วที่มีเลือดนี้ควรทิ้งถังไหน?' },
-  { name: 'Denture', type: 'infected', img: 'waste/assets/trash/denture.svg', question: 'ฟันปลอมนี้ควรทิ้งถังไหน?' },
-  { name: 'Gloves_blood', type: 'infected', img: 'waste/assets/trash/glove_with_blood.svg', question: 'ถุงมือใช้แล้วที่มีเลือดนี้ควรทิ้งถังไหน?' },
-  { name: 'Headcap_cloth', type: 'cloths', img: 'waste/assets/trash/head_cap_cloth.svg', question: 'หมวกคลุมผ่าตัดชนิดผ้านี้ควรทิ้งถังไหน?' },
-  { name: 'Headcap_plastic', type: 'infected', img: 'waste/assets/trash/head_cap_no_recycle.svg', question: 'หมวกคลุมผ่าตัดใช้แล้วทิ้งนี้ควรทิ้งถังไหน?' },
-  { name: "Headcap_recycle", type: 'recycle', img: 'waste/assets/trash/head_cap_recycle.svg', question: 'หมวกคลุมผ่าตัดที่รีไซเคิลได้นี้ควรทิ้งถังไหน?' },
-  { name: 'Juice', type: 'general', img: 'waste/assets/trash/juice.svg', question: 'กล่องน้ำผลไม้นี้ควรทิ้งถังไหน?' },
-  { name: 'Medical_mask', type: 'infected', img: 'waste/assets/trash/medical_mask.svg', question: 'หน้ากากอนามัยนี้ควรทิ้งถังไหน?' },
-  { name: 'Surgical_gown_cloth', type: 'cloths', img: 'waste/assets/trash/surgical_gown_cloth.svg', question: 'เสื้อคลุมผ่าตัดแบบผ้านี้ควรทิ้งถังไหน?' },
-  { name: "Surgical_gown_no_recycle", type: 'infected', img: 'waste/assets/trash/surgical_gown_no_recycle.svg', question: 'เสื้อคลุมผ่าตัดใช้แล้วทิ้งนี้ควรทิ้งถังไหน?' },
-  { name: "Surgical_gown_recycle", type: 'recycle', img: 'waste/assets/trash/surgical_gown_recycle.svg', question: 'เสื้อคลุมผ่าตัดที่รีไซเคิลได้นี้ควรทิ้งถังไหน?' },
-  { name: "T-drape", type: 'recycle', img: 'waste/assets/trash/t-drape.svg', question: 'ผ้าคลุมแบบ t-drape แบบรีไซเคิลได้นี้ควรทิ้งถังไหน?' },
+  { name: "Banana", type: 'general', img: 'assets/trash/banana.svg', question: 'เปลือกกล้วยนี้ควรทิ้งถังไหน?' },
+  { name: 'Box', type: 'general', img: 'assets/trash/box.svg', question: 'กล่องกระดาษนี้ควรทิ้งถังไหน?' },
+  { name: 'Candy', type: 'general', img: 'assets/trash/candy.svg', question: 'เปลือกลูกอมนี้ควรทิ้งถังไหน?' },
+  { name: 'Coffee', type: 'general', img: 'assets/trash/coffee.svg', question: 'แก้วกาแฟนี้ควรทิ้งถังไหน?' },
+  { name: 'Cotton_blood', type: 'infected', img: 'assets/trash/cotton_blood.svg', question: 'สำลีใช้แล้วที่มีเลือดนี้ควรทิ้งถังไหน?' },
+  { name: 'Denture', type: 'infected', img: 'assets/trash/denture.svg', question: 'ฟันปลอมนี้ควรทิ้งถังไหน?' },
+  { name: 'Gloves_blood', type: 'infected', img: 'assets/trash/glove_with_blood.svg', question: 'ถุงมือใช้แล้วที่มีเลือดนี้ควรทิ้งถังไหน?' },
+  { name: 'Headcap_cloth', type: 'cloths', img: 'assets/trash/head_cap_cloth.svg', question: 'หมวกคลุมผ่าตัดชนิดผ้านี้ควรทิ้งถังไหน?' },
+  { name: 'Headcap_plastic', type: 'infected', img: 'assets/trash/head_cap_no_recycle.svg', question: 'หมวกคลุมผ่าตัดใช้แล้วทิ้งนี้ควรทิ้งถังไหน?' },
+  { name: "Headcap_recycle", type: 'recycle', img: 'assets/trash/head_cap_recycle.svg', question: 'หมวกคลุมผ่าตัดที่รีไซเคิลได้นี้ควรทิ้งถังไหน?' },
+  { name: 'Juice', type: 'general', img: 'assets/trash/juice.svg', question: 'กล่องน้ำผลไม้นี้ควรทิ้งถังไหน?' },
+  { name: 'Medical_mask', type: 'infected', img: 'assets/trash/medical_mask.svg', question: 'หน้ากากอนามัยนี้ควรทิ้งถังไหน?' },
+  { name: 'Surgical_gown_cloth', type: 'cloths', img: 'assets/trash/surgical_gown_cloth.svg', question: 'เสื้อคลุมผ่าตัดแบบผ้านี้ควรทิ้งถังไหน?' },
+  { name: "Surgical_gown_no_recycle", type: 'infected', img: 'assets/trash/surgical_gown_no_recycle.svg', question: 'เสื้อคลุมผ่าตัดใช้แล้วทิ้งนี้ควรทิ้งถังไหน?' },
+  { name: "Surgical_gown_recycle", type: 'recycle', img: 'assets/trash/surgical_gown_recycle.svg', question: 'เสื้อคลุมผ่าตัดที่รีไซเคิลได้นี้ควรทิ้งถังไหน?' },
+  { name: "T-drape", type: 'recycle', img: 'assets/trash/t-drape.svg', question: 'ผ้าคลุมแบบ t-drape แบบรีไซเคิลได้นี้ควรทิ้งถังไหน?' },
 ];
 
 const bins = [
   {
     type: 'general',
     label: 'ทั่วไป<br>ไม่ติดเชื้อ',
-    lid: 'waste/assets/bin/green lid.svg',
-    body: 'waste/assets/bin/green bin.svg'
+    lid: 'assets/bin/green lid.svg',
+    body: 'assets/bin/green bin.svg'
   },
   {
     type: 'infected',
     label: 'ติดเชื้อ',
-    lid: 'waste/assets/bin/red lid.svg',
-    body: 'waste/assets/bin/red bin.svg'
+    lid: 'assets/bin/red lid.svg',
+    body: 'assets/bin/red bin.svg'
   },
   {
     type: 'recycle',
     label: 'รีไซเคิลได้',
-    lid: 'waste/assets/bin/red lid.svg',
-    body: 'waste/assets/bin/red recycle.svg'
+    lid: 'assets/bin/red lid.svg',
+    body: 'assets/bin/red recycle.svg'
   },
   {
     type: 'cloths',
     label: 'ผ้าเชื้อ',
-    // lid:  'waste/bin/laundry basket.svg',
-    body: 'waste/assets/bin/laundry basket.svg'
+    // lid:  'assets/bin/laundry basket.svg',
+    body: 'assets/bin/laundry basket.svg'
   }
 ];
+
+
+const mascots = [
+  {
+    type: 'best',
+    label: 'GREEN GARDIAN',
+    name: 'ดอกเตอร์กรีน',
+    minScore: 1200,
+    svg: 'assets/mascots/green_gardian.svg',
+    description: 'ผู้พิทักษ์ของโรงพยาบาล<br>ช่วยโลกได้อย่างมือโปร!'
+  },
+  {
+    type: 'good',
+    label: 'ECO EXPLORER',
+    name: 'น้องอีโค่',
+    minScore: 750,
+    svg: 'assets/mascots/eco_explorer.svg',
+    description: 'พยาบาลสายแยกขยะ<br>พยายามอีกนิด<br>เป็นนักแยกขั้นเทพแน่นอน!'
+  },
+  {
+    type: 'mid',
+    label: 'WASTE WATCHER',
+    name: 'ผู้ช่วยคลีน',
+    minScore: 500,
+    svg: 'assets/mascots/waste_watcher.svg',
+    description: 'เจ้าหน้าที่จัดการขยะผู้ใจดี<br>เริ่มต้นได้ดีแล้ว<br>แต่ยังมีอะไรให้เรียนรู้อีกเพียบ!'
+  },
+  {
+    type: 'rookie',
+    label: 'ROOKIE RECYCLER',
+    name: 'น้อง Cure',
+    minScore: 0,
+    svg: 'assets/mascots/rookie_recycler.svg',
+    description: 'เด็กฝึกงานสายกรีน<br>เพิ่งเริ่มต้นแต่มีไฟ<br>มาเรียนรู้ไปด้วยกัน!'
+  }
+];
+
+function getMascotByScore(score) {
+  const sorted = mascots.sort((a, b) => b.minScore - a.minScore);
+  return sorted.find(m => score >= m.minScore) || sorted[sorted.length - 1];
+}
+
 
 // const progressEl = document.querySelector('.progress');
 const progressMask = document.getElementById('progressMask') || null;
 const wasteCard = document.getElementById('wasteCard');
 let current = 0, score = 0, correctCount = 0, maxTime = 15, timer = maxTime, timerInterval;
-const scoreMultiplier = 20;
+const scoreMultiplier = 10;
 
-function getPlayerName() {
-  return localStorage.getItem('playerName') || ('Guest' + Math.floor(Math.random() * 9000 + 1000));
-}
 
 function updateProgress(pct) {
-  const filled = 100 - pct; // สีเทาขยับจากขวา
+  const filled = 100 - pct;
   if (progressMask) progressMask.style.width = filled + '%';
 }
+
 
 function handleWasteAnswer(selectedType) {
   const w = wasteItems[current];
@@ -133,31 +173,39 @@ function launchConfetti() {
 
 
 function showFinalScore() {
-  wasteCard.innerHTML = `
-    <div class="result" style="font-size:2.0rem; text-align:center; line-height:1.6;">
+  wasteCard.innerHTML = ''; 
+
+  const mascot = getMascotByScore(score);
+
+  const resultHTML = `
+  <div class="result">
+    <div class="score-summary">
       🎉 คุณตอบถูกทั้งหมด <strong>${correctCount}</strong> ข้อ จาก ${wasteItems.length} ข้อ<br>
       🏆 คะแนนรวมทั้งหมด: <strong>${score}</strong> คะแนน
     </div>
-  `;
+
+    <div class="mascot-final-box">
+      <div class="mascot-img">
+        <img src="${mascot.svg}" alt="${mascot.name}" />
+      </div>
+      <div class="mascot-text">
+        <h2 style="font-size: 1.6rem;">🌟 คาแรคเตอร์ของคุณคือ:<br><span class="mascot-label ${mascot.type}">${mascot.label}</span></h2>
+        <h3>${mascot.name}</h3>
+        <p>${mascot.description}</p>
+      </div>
+    </div>
+  </div>
+`;
+
+
+  wasteCard.innerHTML = resultHTML;
 
   launchConfetti();
 
   const resultEl = document.getElementById('wasteResult');
-  resultEl.innerHTML = '';
+  if (resultEl) resultEl.innerHTML = '';
 }
 
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  shuffleArray(wasteItems);
-  showWaste(0);
-});
 
 
 function showWaste(idx) {
@@ -183,8 +231,6 @@ function showWaste(idx) {
     <div id="wasteResult" class="result"></div>
   </div>
 `;
-
-
 
   const binsRow = document.querySelector('.bins-row');
   binsRow.innerHTML = '';
@@ -232,6 +278,23 @@ function showWaste(idx) {
   }, 1000);
 }
 
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  console.log("Shuffled wasteItems:", array); 
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  shuffleArray(wasteItems);
   showWaste(0);
 });
+
+function getMascotByScore(score) {
+  // เรียงจากสูง -> ต่ำ
+  const sorted = mascots.sort((a, b) => b.minScore - a.minScore);
+  return sorted.find(m => score >= m.minScore);
+}
+
