@@ -1,7 +1,7 @@
 /* General resets */
 * {
 	box-sizing: border-box;
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 
 body {
@@ -321,6 +321,10 @@ input[type="text"]:focus {
 	background: linear-gradient(90deg, #74c5e4 0%, #62d1a6 100%);
 	width: 100%;
 	transition: width 0.3s, background 0.3s;
+}
+
+.progress-bar {
+    transition: width 0.55s cubic-bezier(.63,.13,.61,1.17), background 0.35s;
 }
 
 .timer-label {
@@ -678,3 +682,4 @@ input[type=number] {
 		padding: 18px 2vw 14px 2vw;
 	}
 }
+

@@ -11,6 +11,11 @@ if (!isset($_SESSION['nickname'])) {
 <head>
     <meta charset="UTF-8">
     <title>Green Quest: Hi-Trust Mini Games</title>
+    <script>
+        // Reset quiz timer when user lands on the menu
+        sessionStorage.removeItem("timeLeft");
+    </script>
+
     <style>
         /* === GLOBAL RESETS === */
         * {
