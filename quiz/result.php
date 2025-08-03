@@ -7,7 +7,7 @@ if (!isset($_SESSION['nickname'])) {
     exit();
 }
 
-// Quiz score: from session (or query string as fallback)
+// Get quiz score from session or query string
 $quizScore = isset($_SESSION['score']) ? $_SESSION['score'] : (isset($_GET['score']) ? intval($_GET['score']) : 0);
 $nickname = $_SESSION['nickname'];
 ?>
@@ -30,15 +30,26 @@ $nickname = $_SESSION['nickname'];
         <a href="menu.php" class="btn-alt">กลับเมนู</a>
     </div>
     <script>
-    // Get waste_score from localStorage (from waste.html's script)
-    window.onload = function() {
+    window.onload = function () {
+        // Read waste score from localStorage (set by waste game)
         let waste = localStorage.getItem('waste_score') || 0;
         document.getElementById('waste-score').textContent = waste;
         let quiz = <?php echo $quizScore; ?>;
         let total = parseInt(quiz) + parseInt(waste);
         document.getElementById('total-score').textContent = total;
-        // Optional: clear waste_score if you want to reset for next game
-        // localStorage.removeItem('waste_score');
+
+        // --- SEND TO PHP TO UPDATE LEADERBOARD ---
+        fetch('save_leaderboard.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'nickname=' + encodeURIComponent('<?php echo $nickname; ?>') +
+                '&quiz=' + quiz +
+                '&waste=' + waste +
+                '&overall=' + total
+        });
+
+        // Clear waste_score for next time (optional but recommended)
+        localStorage.removeItem('waste_score');
     };
     </script>
 </body>

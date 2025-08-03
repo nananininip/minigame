@@ -35,24 +35,63 @@ session_destroy(); // Destroy the session
 </head>
 <style>
     body {
-        font-family: Arial, sans-serif;
-        background-color: #f8f9fa;
-        margin-top: 5%;
-        text-align: center;
+        font-family: 'Prompt', Arial, sans-serif;
+        background: #ecfdf5;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 
+    h1 {
+        color: #2ea87c;
+        font-size: 2.2em;
+        margin-bottom: 0.2em;
+        margin-top: 0.5em;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    p {
+        color: #3c7461;
+        font-size: 1.18em;
+        margin: 0.2em 0 0.5em 0;
+        font-weight: 500;
+    }
+
+    strong {
+        color: #14995b;
     }
 
     .btn-newQ {
-        font-size: 16px;
+        font-size: 1em;
         font-weight: bold;
-        padding: 10px;
-        color: white;
-        border: 3px solid #0066cc;
-        border-radius: 5px;
+        padding: 0.67em 2.1em;
+        color: #fff;
+        border: none;
+        border-radius: 13px;
         cursor: pointer;
-        background-color: #96D4D4;
+        background: linear-gradient(90deg, #8ff3a8 0%, #5ce4c0 100%);
+        box-shadow: 0 4px 18px #c1f4d9;
+        margin-top: 2em;
+        transition: background 0.17s, box-shadow 0.17s;
+        letter-spacing: 1.2px;
+    }
+
+    .btn-newQ:hover {
+        background: linear-gradient(90deg, #5ce4c0 0%, #8ff3a8 100%);
+        box-shadow: 0 6px 28px #b9ffdc;
+    }
+
+    form {
+        margin-top: 1.5em;
     }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
