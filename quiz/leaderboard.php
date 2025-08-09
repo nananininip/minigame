@@ -1,12 +1,46 @@
 <?php
 require 'functions.php';
-$leaderboard = getLeaderboard();
+$rows = getLeaderboard();
 
-function formatTime($seconds)
+// === Build views ===
+// Overall: by overall desc, then total time asc
+$overallView = $rows;
+usort($overallView, function ($a, $b) {
+    $ta = $a['time_quiz'] + $a['time_waste'];
+    $tb = $b['time_quiz'] + $b['time_waste'];
+    if ($a['overall'] !== $b['overall'])
+        return $b['overall'] - $a['overall'];
+    if ($ta !== $tb)
+        return $ta - $tb;
+    return strcasecmp($a['nickname'], $b['nickname']);
+});
+$overallView = array_slice($overallView, 0, 10);
+
+// Quiz: by quiz desc, then quiz time asc
+$quizView = $rows;
+usort($quizView, function ($a, $b) {
+    if ($a['quiz'] !== $b['quiz'])
+        return $b['quiz'] - $a['quiz'];
+    if ($a['time_quiz'] !== $b['time_quiz'])
+        return $a['time_quiz'] - $b['time_quiz'];
+    return strcasecmp($a['nickname'], $b['nickname']);
+});
+$quizView = array_slice($quizView, 0, 10);
+
+// Waste: by waste desc, then waste time asc
+$wasteView = $rows;
+usort($wasteView, function ($a, $b) {
+    if ($a['waste'] !== $b['waste'])
+        return $b['waste'] - $a['waste'];
+    if ($a['time_waste'] !== $b['time_waste'])
+        return $a['time_waste'] - $b['time_waste'];
+    return strcasecmp($a['nickname'], $b['nickname']);
+});
+$wasteView = array_slice($wasteView, 0, 10);
+
+function h($s)
 {
-    $minutes = floor($seconds / 60);
-    $secs = $seconds % 60;
-    return sprintf("%d:%02d", $minutes, $secs);
+    return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 }
 ?>
 <!DOCTYPE html>
@@ -15,208 +49,221 @@ function formatTime($seconds)
 <head>
     <meta charset="UTF-8">
     <title>Leaderboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --green: #38a169;
+            --bg: #f5fce8;
+            --card: #fff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --tab: #e5f7ee
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
         body {
-            font-family: 'Prompt', sans-serif;
-            background: #f5fce8;
             margin: 0;
+            font-family: 'Prompt', sans-serif;
+            background: var(--bg);
+            color: var(--text)
         }
 
         .navbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1.1em 2em;
+            padding: 16px 24px;
             background: #fff;
-            color: #38a169;
+            box-shadow: 0 2px 16px #dcf5e8
+        }
+
+        .brand {
             font-weight: 700;
-            font-size: 1.16em;
-            box-shadow: 0 2px 16px #dcf5e8;
-            min-height: 56px;
-            border-radius: 0 0 16px 16px;
+            color: var(--green)
         }
 
-        .navbar-brand {
-            font-size: 1.08em;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #40b53a;
-            opacity: 1;
+        .wrap {
+            max-width: 980px;
+            margin: 24px auto;
+            padding: 0 16px
         }
 
-        .btn-main {
-            background: linear-gradient(90deg, #baffc9 0, #b1ffe9 100%);
-            color: #24995c;
-            border: none;
-            border-radius: 9px;
-            font-weight: 600;
-            padding: 0.38em 1.02em;
-            font-size: 0.95em;
-            cursor: pointer;
-            box-shadow: 0 2px 7px #bcf7d1;
-            margin-left: 8px;
-            transition: background 0.16s, color 0.16s;
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap
         }
 
-        .btn-main:hover {
-            background: linear-gradient(90deg, #97f8a1 0, #a5fae5 100%);
-            color: #24995c;
-        }
-
-        .container {
-            margin: 120px auto 0 auto;
-            max-width: 640px;
+        .tab-btn {
+            border: 1px solid var(--green);
             background: #fff;
-            border-radius: 28px;
-            box-shadow: 0 8px 36px #dcf5e8;
-            padding: 1.6em 1.2em 1.7em 1.2em;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer
         }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 0em;
-            font-size: 1.18em;
-            letter-spacing: 1px;
-            color: #2d8957;
-            font-weight: 700;
+        .tab-btn.active {
+            background: var(--tab)
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #dcf5e8;
+            padding: 8px
         }
 
         table {
-            border-collapse: collapse;
-            min-width: 100%;
             width: 100%;
-            background: transparent;
-            border-radius: 14px;
+            border-collapse: collapse
         }
 
         th,
         td {
-            text-align: center;
-            font-size: 1.04em;
-            border: none;
+            padding: 12px 10px;
+            border-bottom: 1px solid #eef5ef;
+            text-align: left
         }
 
         th {
-            background: #e5ffe6;
-            color: #37b24d;
+            font-size: 14px
+        }
+
+        .rank {
+            width: 64px;
             font-weight: 700;
-            padding: 0.85em 0.7em;
-            letter-spacing: 0.3px;
-            border-bottom: 2px solid #b6edc8;
+            color: var(--green)
         }
 
-        td {
-            background: #fff;
-            padding: 0.7em 0.4em;
-            border-bottom: 1px solid #e7f6e6;
-            color: #247846;
-            transition: background 0.12s;
+        .muted {
+            color: var(--muted);
+            font-size: 13px
         }
 
-        tr.gold {
-            background: linear-gradient(90deg, #f5ffd5 80%, #ebffe8 100%) !important;
-        }
-
-        tr.silver {
-            background: linear-gradient(90deg, #e8fff2 70%, #e6f8fd 100%) !important;
-        }
-
-        tr.bronze {
-            background: linear-gradient(90deg, #ffeedd 70%, #e9ffed 100%) !important;
-        }
-
-        .gold {
-            color: #c6ad16 !important;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        .silver {
-            color: #70bda6 !important;
-            font-weight: 800;
-        }
-
-        .bronze {
-            color: #e6ac5a !important;
-            font-weight: 800;
-        }
-
-        table tr:last-child td {
-            border-bottom: none;
-        }
-
-        @media (max-width: 700px) {
-            .container {
-                max-width: 98vw;
-                padding: 1em 0.3em;
-            }
-
-            table,
-            th,
-            td {
-                font-size: 0.97em;
-            }
-        }
-
-        ::-webkit-scrollbar {
-            width: 10px;
-            background: #eee;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #d0ffe2;
-            border-radius: 6px;
+        .hidden {
+            display: none
         }
     </style>
 </head>
 
 <body>
     <div class="navbar">
-        <span class="navbar-brand">Top 10 ผู้เล่น</span>
-        <a href="menu.php" class="btn-main">กลับเมนู</a>
+        <div class="brand">Leaderboard</div>
+        <div class="navbar-buttons">
+            <form action="exit.php" method="post" style="display: inline;">
+                <button type="submit" class="btn-exit">Exit</button>
+            </form>
+        </div>
     </div>
-    <div class="container">
-        <h2>อันดับผู้เล่น 10 อันดับ</h2>
-        <div style="overflow-x:auto;">
+
+    <div class="wrap">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="overall">Overall</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+            <button class="tab-btn" data-tab="waste">Waste</button>
+        </div>
+
+        <!-- OVERALL -->
+        <div id="tab-overall" class="card">
             <table>
-                <tr>
-                    <th>อันดับ</th>
-                    <th>ชื่อ</th>
-                    <th>Quiz</th>
-                    <th>Waste</th>
-                    <th>รวม</th>
-                    <th>เวลาที่ใช้<br>(วินาที / mm:ss)</th>
-                </tr>
-                <?php
-                $rankClass = ['gold', 'silver', 'bronze'];
-                $idx = 0;
-                if (empty($leaderboard)) {
-                    echo '<tr><td colspan="6">ยังไม่มีข้อมูลผู้เล่น</td></tr>';
-                } else {
-                    foreach ($leaderboard as $name => $user):
-                        if ($idx >= 10)
-                            break;
-                        $rowClass = $idx < 3 ? $rankClass[$idx] : '';
-                        ?>
-                        <tr class="<?php echo $rowClass; ?>">
-                            <td class="<?php echo $rowClass; ?>"><?php echo $idx + 1; ?></td>
-                            <td><?php echo htmlspecialchars($name); ?></td>
-                            <td><?php echo (int) $user['quiz']; ?></td>
-                            <td><?php echo (int) $user['waste']; ?></td>
-                            <td><strong><?php echo (int) $user['overall']; ?></strong></td>
-                            <td>
-                                <?php echo (int) $user['time_used']; ?>
-                                <span style="color:#888;">(<?php echo formatTime($user['time_used']); ?>)</span>
-                            </td>
+                <thead>
+                    <tr>
+                        <th class="rank">#</th>
+                        <th>Nickname</th>
+                        <th>Score (Quiz+Waste)</th>
+                        <th>Time (Quiz+Waste)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $i = 1;
+                    foreach ($overallView as $r):
+                        $tot = $r['time_quiz'] + $r['time_waste']; ?>
+                        <tr>
+                            <td class="rank"><?= $i++ ?></td>
+                            <td><?= h($r['nickname']) ?></td>
+                            <td><strong><?= (int) $r['overall'] ?></strong></td>
+                            <td><?= fmtMMSS($tot) ?></td>
                         </tr>
-                        <?php $idx++; endforeach;
-                }
-                ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- QUIZ -->
+        <div id="tab-quiz" class="card hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="rank">#</th>
+                        <th>Nickname</th>
+                        <th>Quiz Score</th>
+                        <th>Quiz Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $i = 1;
+                    foreach ($quizView as $r): ?>
+                        <tr>
+                            <td class="rank"><?= $i++ ?></td>
+                            <td><?= h($r['nickname']) ?></td>
+                            <td><strong><?= (int) $r['quiz'] ?></strong></td>
+                            <td><?= fmtMMSS($r['time_quiz']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- WASTE -->
+        <div id="tab-waste" class="card hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="rank">#</th>
+                        <th>Nickname</th>
+                        <th>Waste Score</th>
+                        <th>Waste Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $i = 1;
+                    foreach ($wasteView as $r): ?>
+                        <tr>
+                            <td class="rank"><?= $i++ ?></td>
+                            <td><?= h($r['nickname']) ?></td>
+                            <td><strong><?= (int) $r['waste'] ?></strong></td>
+                            <td><?= fmtMMSS($r['time_waste']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.tab-btn');
+        const views = {
+            overall: document.getElementById('tab-overall'),
+            quiz: document.getElementById('tab-quiz'),
+            waste: document.getElementById('tab-waste')
+        };
+        tabs.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabs.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const key = btn.dataset.tab;
+                Object.entries(views).forEach(([k, el]) => {
+                    if (k === key) { el.classList.remove('hidden'); }
+                    else { el.classList.add('hidden'); }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

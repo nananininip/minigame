@@ -1,3 +1,4 @@
+let wasteStartTime = Date.now();
 const wasteItems = [
   { name: "Banana", type: 'general', img: 'assets/trash/banana.svg', question: 'เปลือกกล้วยนี้ควรทิ้งถังไหน?' },
   { name: 'Box', type: 'general', img: 'assets/trash/box.svg', question: 'กล่องกระดาษนี้ควรทิ้งถังไหน?' },
@@ -173,7 +174,9 @@ function launchConfetti() {
 
 
 function showFinalScore() {
-  wasteCard.innerHTML = ''; 
+  clearInterval(timerInterval);
+
+  wasteCard.innerHTML = '';
 
   const mascot = getMascotByScore(score);
 
@@ -205,11 +208,18 @@ function showFinalScore() {
   const resultEl = document.getElementById('wasteResult');
   if (resultEl) resultEl.innerHTML = '';
 
-    // --- Add this block at the end of showFinalScore() ---
+  // --- Add this block at the end of showFinalScore() ---
   setTimeout(() => {
-    localStorage.setItem('waste_score', score);
-    window.location.href = "/minigame/quiz/result.php"; // Adjust path if needed
-  }, 2600); // 2.6 seconds delay so user sees the result
+    // Save score
+    localStorage.setItem('waste_score', String(score));
+
+    // Save time used in seconds since the page loaded
+    const elapsedSec = Math.max(0, Math.floor((Date.now() - wasteStartTime) / 1000));
+    localStorage.setItem('waste_time', String(elapsedSec));
+
+    // Go to the result page (relative path from /game/ to /quiz/)
+    window.location.href = "../quiz/result.php";
+  }, 2600);
 
 }
 
@@ -291,7 +301,7 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
-  console.log("Shuffled wasteItems:", array); 
+  console.log("Shuffled wasteItems:", array);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

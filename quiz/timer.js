@@ -1,51 +1,58 @@
-let totalDuration = 50; // seconds
-let timeLeft = totalDuration;
-let quizCountdown;
+// Smooth countdown for the quiz page
+(function () {
+  // Default quiz duration (seconds). Keep in sync with PHP $totalTime.
+  var TOTAL = 50;
 
-// Restore time from previous session (if any)
-if (sessionStorage.getItem("timeLeft")) {
-    timeLeft = parseInt(sessionStorage.getItem("timeLeft"));
-} else {
-    sessionStorage.setItem("timeLeft", timeLeft);
-}
+  var label = document.getElementById("timeLeft");
+  var bar = document.getElementById("timerBar");
+  if (!label || !bar) return;
 
-// Update timer bar and label
-function updateGlobalTimerUI(remaining, total) {
-    document.getElementById("timeLeft").textContent = remaining;
-    const percent = (remaining / total) * 100;
-    const bar = document.getElementById("timerBar");
-    bar.style.width = percent + "%";
-    if (percent <= 20) {
-        bar.style.background = "#f44336";
-    } else if (percent <= 50) {
-        bar.style.background = "#ffc107";
-    } else {
-        bar.style.background = "linear-gradient(90deg, #74c5e4 0%, #62d1a6 100%)";
+  // Read remaining seconds rendered by PHP on page load
+  var initial = parseInt(label.textContent, 10);
+  if (!isFinite(initial) || initial < 0) initial = TOTAL;
+
+  var endTime = Date.now() + initial * 1000;
+  bar.style.transition = "width 100ms linear";
+
+  function updateUI(now) {
+    var remainingMs = Math.max(0, endTime - now);
+    var remainingSec = Math.ceil(remainingMs / 1000);
+
+    // Label
+    label.textContent = remainingSec;
+
+    // Progress bar (from full to 0)
+    var pct = (remainingMs / (TOTAL * 1000)) * 100;
+    if (pct < 0) pct = 0;
+    if (pct > 100) pct = 100;
+    bar.style.width = pct + "%";
+  }
+
+  function tick() {
+    var now = Date.now();
+    updateUI(now);
+
+    if (now >= endTime) {
+      // Time up → let server handle end state
+      window.location.href = "quiz.php?timeout=1";
+      return;
     }
-}
+    requestAnimationFrame(tick);
+  }
 
-// Start timer on load
-function startGlobalTimer(startAt) {
-    updateGlobalTimerUI(startAt, totalDuration);
+  // Start
+  // Set starting width based on initial seconds left
+  bar.style.width = (initial / TOTAL) * 100 + "%";
+  requestAnimationFrame(tick);
 
-    quizCountdown = setInterval(() => {
-        timeLeft--;
-        sessionStorage.setItem("timeLeft", timeLeft);
-        updateGlobalTimerUI(timeLeft, totalDuration);
-
-        if (timeLeft <= 0) {
-            clearInterval(quizCountdown);
-            sessionStorage.removeItem("timeLeft");
-            autoSubmitFinal();
-        }
-    }, 1000);
-}
-
-// When time runs out, redirect to result/exit page
-function autoSubmitFinal() {
-    window.location.href = "quiz.php?timeout=1";
-}
-
-window.onload = function() {
-    startGlobalTimer(timeLeft);
-}
+  // If page returns from bfcache, recompute timing
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) {
+      var current = parseInt(label.textContent, 10);
+      if (isFinite(current) && current > 0) {
+        endTime = Date.now() + current * 1000;
+      }
+      requestAnimationFrame(tick);
+    }
+  });
+})();
