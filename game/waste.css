@@ -13,10 +13,12 @@
 }
 
 
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
 
+/* 
 .logo-container {
   position: fixed;
   top: 48px;
@@ -25,16 +27,50 @@ html, body {
   gap: 12px;
   align-items: center;
   padding: 8px 16px;
-  background-color: #ffffff97; 
+  background-color: #ffffff97;
   border-radius: 32px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 999;
 }
 
 .logo-container img {
-  width: 180px;       
+  width: 180px;
   height: auto;
+} */
+.logo-container {
+  position: fixed;
+  top: 32px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 0; /* no flex gap */
+  padding: 6px 8px; /* tighter padding around logos */
+  background-color: #ffffff97;
+  border-radius: 36px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  width: auto; /* only as wide as needed for logos */
 }
+
+.logo-container img {
+  display: block;
+  object-fit: contain;
+}
+
+.logo-container img:not([alt="R2R Logo"]) {
+  width: 170px; /* slightly smaller first logo */
+  height: auto;
+  margin-right: -22px; /* tight overlap */
+}
+
+.logo-container img[alt="R2R Logo"] {
+  width: 320px; /* larger R2R */
+  height: auto;
+  margin-top: 4px;
+}
+
+
+
 
 body {
   font-family: 'Prompt', sans-serif;
@@ -86,7 +122,8 @@ body {
   right: 0;
   height: 100%;
   width: 0%;
-  background-color: var(--bg); /* เทาสว่างแบบพื้นหลัง */
+  background-color: var(--bg);
+  /* เทาสว่างแบบพื้นหลัง */
   transition: width 0.4s linear;
 }
 
@@ -94,17 +131,18 @@ body {
 .game-card {
   margin: 1.5rem auto;
   background: #fff;
-  width: 95%;    
+  width: 95%;
   max-width: 1200px;
-  height: 60vh;                 
-  overflow-y: hidden;            
+  height: 60vh;
+  overflow-y: hidden;
   padding: 1rem 1rem 2rem;
   border-radius: 24px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* เริ่มที่หัวข้อด้านบน */
+  justify-content: center;
+  /* เริ่มที่หัวข้อด้านบน */
   scroll-behavior: smooth;
   box-sizing: border-box;
 }
@@ -113,26 +151,32 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;  /* กระจายเท่ากันในแนวตั้ง */
+  justify-content: space-evenly;
+  /* กระจายเท่ากันในแนวตั้ง */
   height: 100%;
   width: 100%;
 }
 
 .question {
-  font-size: clamp(3rem, 4vw, 3.4rem);
+  font-size: clamp(2.1rem, 3.6vw, 3rem);
+  /* a bit more */
   font-weight: 600;
+  margin-top: 2.6rem;
+  /* a bit more top space */
   margin-bottom: 1rem;
   text-align: center;
 }
 
 /* Timer */
 .timer {
-  margin: 0.5rem auto 1.3rem auto;
+  margin: 0.7rem auto 1.6rem auto;
+  /* a bit more space */
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
+  gap: 0.7rem;
+  font-size: 1.4rem;
+  /* a bit bigger */
   color: #333;
 }
 
@@ -141,7 +185,8 @@ body {
 }
 
 #timerNum {
-  font-size: clamp(3rem, 4vw, 3.4rem);
+  font-size: clamp(3.6rem, 5vw, 4rem);
+  /* a bit bigger */
   font-weight: bold;
 }
 
@@ -155,10 +200,11 @@ body {
   width: var(--item-size);
 }
 
-.bins-row, #bins {
+.bins-row,
+#bins {
   display: flex;
-  flex-wrap: nowrap; 
-  justify-content: center; 
+  flex-wrap: nowrap;
+  justify-content: center;
   align-items: flex-end;
   gap: clamp(1rem, 2.5vw, 2rem);
   padding: 0 1rem;
@@ -207,7 +253,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;  
+  justify-content: center;
   padding: 20px 1rem;
   width: var(--bin-size);
   height: clamp(200px, 25vw, 260px);
@@ -220,7 +266,8 @@ body {
   z-index: 2;
 }
 
-.bin-body, .bin-lid {
+.bin-body,
+.bin-lid {
   max-width: 90%;
   object-fit: contain;
   margin-top: auto;
@@ -236,7 +283,7 @@ body {
   height: auto;
   margin: 0 auto;
   z-index: 3;
-  transition: transform 0.35s cubic-bezier(.37,1.63,.34,.98);
+  transition: transform 0.35s cubic-bezier(.37, 1.63, .34, .98);
   transform-origin: 50% 100%;
   margin-top: 5px;
   margin-bottom: 30px;
@@ -248,13 +295,15 @@ body {
 
 .bin-drop .bin-body {
   position: absolute;
-  bottom: 0px; 
+  bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
-  width: clamp(200px, 90%, 280px); /* ไม่เกิน box */
+  width: clamp(200px, 90%, 280px);
+  /* ไม่เกิน box */
   height: auto;
   z-index: 1;
-  margin-top: 0; /* ลบ margin บนออก */
+  margin-top: 0;
+  /* ลบ margin บนออก */
 }
 
 .bin-drop.drag-over {
@@ -272,9 +321,12 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.08);
   }
@@ -320,19 +372,19 @@ body {
 }
 
 .mascot-label.best {
-  color: #326c12; 
+  color: #326c12;
 }
 
 .mascot-label.good {
-  color: #a38916; 
+  color: #a38916;
 }
 
 .mascot-label.mid {
-  color: #ba6c1e; 
+  color: #ba6c1e;
 }
 
 .mascot-label.rookie {
-  color: #bb3930; 
+  color: #bb3930;
 }
 
 .mascot-img {
@@ -422,5 +474,482 @@ body {
 
   .bin-drop {
     margin-bottom: 1rem;
+  }
+}
+
+/* space only when logos exist */
+.has-logos {
+  padding-top: 96px !important;
+}
+
+
+/* smaller fixed logos so they never cover content */
+.logo-container {
+  top: 12px !important;
+  left: 12px !important;
+  padding: 6px 10px !important;
+  gap: 8px !important;
+  border-radius: 20px !important;
+}
+
+.logo-container img {
+  width: 120px !important;
+  height: 40px !important;
+  object-fit: contain !important;
+}
+
+@media (max-width:834px) {
+  .logo-container img {
+    width: 90px !important;
+    height: 32px !important;
+  }
+}
+
+/* start the card from the top and give it predictable height */
+.game-card {
+  justify-content: flex-start !important;
+  height: min(80vh, 940px) !important;
+  /* taller */
+  min-height: 560px !important;
+  padding: 1rem 1.2rem 2rem !important;
+  margin-top: 12px !important;
+}
+
+/* slimmer progress bar for more vertical room */
+.progress-wrap {
+  height: 12px !important;
+}
+
+.game-title {
+  font-size: clamp(2rem, 3.6vw, 2.6rem) !important;
+  margin-top: -2.1rem !important;
+  /* pulls title up more */
+  margin-bottom: 0.2rem !important;
+  /* tighter gap before timer */
+  text-align: center;
+}
+
+
+#timerNum {
+  font-size: clamp(1.6rem, 2.6vw, 2rem) !important;
+}
+
+/* item smaller */
+.draggable,
+.draggable-item {
+  margin: 0 auto !important;
+}
+
+.draggable-item img {
+  width: clamp(160px, 26vw, 240px) !important;
+  max-width: 240px !important;
+}
+
+.drag-instruction {
+  font-size: 1.2rem !important;
+  margin: 1rem 0 1.2rem !important;
+}
+
+/* bins can wrap and stay within card */
+.bins-row,
+#bins {
+  flex-wrap: wrap !important;
+  /* was nowrap */
+  justify-content: center !important;
+  align-items: flex-end !important;
+  gap: clamp(.8rem, 2vw, 1.4rem) !important;
+  margin: .6rem auto 1rem !important;
+  max-width: 1000px !important;
+}
+
+.bin-drop {
+  flex: 0 1 220px !important;
+  height: clamp(160px, 20vw, 220px) !important;
+  padding: 12px 8px !important;
+}
+
+.bin-drop .bin-lid {
+  top: -30px !important;
+  max-width: 180px !important;
+}
+
+.bin-drop .bin-body {
+  width: clamp(150px, 80%, 220px) !important;
+}
+
+
+
+/* MacBook 13"+ slight downscale to match Live Server feel */
+@media (min-width:1280px) {
+  .game-card {
+    transform: none !important;
+    height: min(73vh, 720px) !important;
+    /* slightly taller */
+    min-height: 690px !important;
+    /* a bit more height */
+    margin-top: -1rem !important;
+    /* moves it up slightly */
+  }
+
+
+  .game-title {
+    font-size: clamp(2rem, 3.6vw, 2.6rem) !important;
+    margin-top: -2.rem !important;
+    /* ขยับขึ้น */
+    margin-bottom: 1.2rem !important;
+    /* เพิ่มช่องว่างด้านล่าง */
+    text-align: center;
+  }
+
+
+  .bins-row,
+  #bins {
+    gap: clamp(1.5rem, 3vw, 2.2rem) !important;
+    /* ช่องว่างลดลง */
+    padding: 0 1.5rem;
+  }
+
+  .bin-wrapper {
+    max-width: 300px !important;
+    /* ลดจาก 360px */
+    flex: 1;
+  }
+
+  .bin-drop {
+    flex: 0 1 170px !important;
+    /* ลดขนาดถัง */
+    height: clamp(150px, 24vw, 190px) !important;
+    /* ลดความสูง */
+    margin-top: 1rem !important;
+    /* ให้ต่ำลงเล็กน้อย */
+  }
+
+  .bin-drop .bin-lid {
+    max-width: 150px !important;
+    /* ลดความกว้างฝา */
+  }
+
+  .bin-drop .bin-body {
+    width: clamp(150px, 80%, 170px) !important;
+    /* ลดความกว้างตัวถัง */
+  }
+
+
+  #wasteResult {
+    font-size: clamp(0.9rem, 2.4vw, 1.2rem) !important;
+  }
+
+  #question {
+    font-size: clamp(0.25rem, 0.45vw, 0.4rem) !important;
+    /* เล็กลงอีกขั้น */
+    margin-top: 0.3rem !important;
+    margin-bottom: -0.5rem !important;
+    text-align: center !important;
+    line-height: 1.2;
+  }
+
+
+  .timer {
+    font-size: clamp(1.6rem, 2.8vw, 2.2rem) !important;
+    /* bigger size */
+    margin-top: -1.2rem !important;
+    text-align: center;
+    position: relative;
+  }
+
+  #timerNum {
+    font-size: inherit !important;
+  }
+
+  /* Target specific waste item images and make them smaller */
+  .draggable-item img[src*="surgical_gown_cloth.svg"],
+  .draggable-item img[src*="surgical_gown_no_recycle.svg"],
+  .draggable-item img[src*="surgical_gown_recycle.svg"],
+  .draggable-item img[src*="juice.svg"],
+  .draggable-item img[src*="coffee.svg"] {
+    width: clamp(80px, 20vw, 120px) !important;
+    max-width: 120px !important;
+  }
+
+
+  .draggable-item img[src*="t-drape.svg"] {
+    width: clamp(140px, 34vw, 180px) !important;
+    /* ใหญ่ขึ้น */
+    max-width: 180px !important;
+    /* เพิ่มขนาดสูงสุด */
+  }
+
+  .draggable-item img {
+    width: clamp(120px, 28vw, 170px) !important;
+    max-width: 170px !important;
+  }
+
+  .logo-container {
+    position: fixed;
+    top: 32px;
+    left: 32px;
+    display: flex;
+    gap: 0px;
+    /* no gap between logos */
+    align-items: center;
+    padding: 10px 22px;
+    background-color: #ffffff97;
+    border-radius: 36px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+  }
+
+  .logo-container img[alt="R2R Logo"] {
+    width: 500px;
+    /* increase only R2R logo size */
+    height: 80px;
+    object-fit: contain;
+  }
+
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 250px;
+    height: 60px;
+    object-fit: contain;
+  }
+
+}
+
+
+/* iPad size adjustments */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .game-card {
+    transform: none !important;
+    height: min(68vh, 640px) !important;
+    /* smaller height */
+    min-height: 610px !important;
+    margin-top: -0.6rem !important;
+    /* slightly up */
+  }
+
+  .game-title {
+    font-size: clamp(1.6rem, 3vw, 2rem) !important;
+    /* smaller title */
+    margin-top: -1.2rem !important;
+    margin-bottom: 1rem !important;
+    text-align: center;
+  }
+
+  .bins-row,
+  #bins {
+    gap: clamp(1rem, 2.2vw, 1.8rem) !important;
+    /* smaller gap */
+    padding: 0 1rem;
+  }
+
+  .bin-wrapper {
+    max-width: 260px !important;
+    /* narrower bins */
+    flex: 1;
+  }
+
+  .bin-drop {
+    flex: 0 1 140px !important;
+    /* smaller bin size */
+    height: clamp(130px, 22vw, 160px) !important;
+    margin-top: 0.8rem !important;
+  }
+
+  .bin-drop .bin-lid {
+    max-width: 130px !important;
+  }
+
+  .bin-drop .bin-body {
+    width: clamp(120px, 78%, 150px) !important;
+  }
+
+  #wasteResult {
+    font-size: clamp(0.8rem, 1.8vw, 1rem) !important;
+  }
+
+  #question,
+  .game-card #question {
+    font-size: clamp(0.04rem, 0.07vw, 0.07rem) !important;
+    /* even smaller */
+    margin-top: 0.08rem !important;
+    margin-bottom: -0.12rem !important;
+    text-align: center !important;
+    line-height: 1.2;
+  }
+
+  .timer {
+    font-size: clamp(1.6rem, 2.8vw, 2.2rem) !important;
+    /* more */
+    margin-top: -0.9rem !important;
+    text-align: center;
+    position: relative;
+  }
+
+  #timerNum {
+    font-size: inherit !important;
+  }
+
+  /* Smaller waste item images */
+  .draggable-item img[src*="surgical_gown_cloth.svg"],
+  .draggable-item img[src*="surgical_gown_no_recycle.svg"],
+  .draggable-item img[src*="surgical_gown_recycle.svg"],
+  .draggable-item img[src*="juice.svg"],
+  .draggable-item img[src*="coffee.svg"] {
+    width: clamp(70px, 18vw, 100px) !important;
+    max-width: 100px !important;
+  }
+
+  .draggable-item img[src*="t-drape.svg"] {
+    width: clamp(110px, 28vw, 150px) !important;
+    max-width: 150px !important;
+  }
+
+  .draggable-item img {
+    width: clamp(100px, 25vw, 150px) !important;
+    max-width: 150px !important;
+  }
+
+  .character-left {
+    width: 140px !important;
+    /* smaller for mobile */
+    left: 8px !important;
+    bottom: -8px !important;
+  }
+
+  .character-right {
+    width: 150px !important;
+    /* smaller for mobile */
+    right: 8px !important;
+    bottom: -8px !important;
+  }
+
+  .logo-container {
+    position: fixed;
+    top: 32px;
+    left: 32px;
+    display: flex;
+    gap: 0px;
+    /* no gap between logos */
+    align-items: center;
+    padding: 12px 24px;
+    background-color: #ffffff97;
+    border-radius: 36px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+  }
+
+  .logo-container img[alt="R2R Logo"] {
+    width: 400px;
+    /* increase only R2R logo size */
+    height: 80px;
+    object-fit: contain;
+  }
+
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 250px;
+    height: 60px;
+    object-fit: contain;
+  }
+}
+
+
+
+.character-left {
+  position: fixed;
+  bottom: -10px;
+  /* moved down from 5px */
+  left: 20px;
+  width: 250px;
+  /* bigger size */
+  z-index: 9999;
+  animation: bounce 3s infinite ease-in-out;
+}
+
+.character-right {
+  position: fixed;
+  bottom: -10px;
+  /* moved down from 5px */
+  right: 14px;
+  width: 270px;
+  /* bigger size */
+  z-index: 9999;
+  animation: bounce 3s infinite ease-in-out;
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+
+/* iPad Mini & iPad 9th gen Portrait (768px wide) */
+@media (min-width: 760px) and (max-width: 834px) and (orientation: portrait) {
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 140px;
+    margin-right: -18px;
+  }
+  .logo-container img[alt="R2R Logo"] {
+    width: 260px;
+  }
+}
+
+/* iPad Mini & iPad 9th gen Landscape (1024px wide) */
+@media (min-width: 1000px) and (max-width: 1050px) and (orientation: landscape) {
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 150px;
+    margin-right: -20px;
+  }
+  .logo-container img[alt="R2R Logo"] {
+    width: 280px;
+  }
+}
+
+/* iPad Air / Pro 11" Portrait (834px wide) */
+@media (min-width: 830px) and (max-width: 850px) and (orientation: portrait) {
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 150px;
+    margin-right: -18px;
+  }
+  .logo-container img[alt="R2R Logo"] {
+    width: 270px;
+  }
+}
+
+/* iPad Air / Pro 11" Landscape (1194px wide) */
+@media (min-width: 1180px) and (max-width: 1200px) and (orientation: landscape) {
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 160px;
+    margin-right: -20px;
+  }
+  .logo-container img[alt="R2R Logo"] {
+    width: 300px;
+  }
+}
+
+/* iPad Pro 12.9" Portrait (1024px wide) */
+@media (min-width: 1020px) and (max-width: 1040px) and (orientation: portrait) {
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 160px;
+    margin-right: -20px;
+  }
+  .logo-container img[alt="R2R Logo"] {
+    width: 300px;
+  }
+}
+
+/* iPad Pro 12.9" Landscape (1366px wide) */
+@media (min-width: 1360px) and (max-width: 1370px) and (orientation: landscape) {
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 180px;
+    margin-right: -22px;
+  }
+  .logo-container img[alt="R2R Logo"] {
+    width: 340px;
   }
 }
