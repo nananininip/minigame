@@ -2,106 +2,102 @@
 session_start();
 require 'functions.php';
 
-// Check if the user is logged in
 if (!isset($_SESSION['nickname'])) {
     header('Location: index.php');
     exit();
 }
-
 $nickname = $_SESSION['nickname'];
 
-// Get the overall points from the leaderboard
-$leaderboard = getLeaderboard();
-$overall_points = isset($leaderboard[$nickname]['overall']) ? $leaderboard[$nickname]['overall'] : 0;
-$quiz_points = isset($leaderboard[$nickname]['quiz']) ? $leaderboard[$nickname]['quiz'] : 0;
-$waste_points = isset($leaderboard[$nickname]['waste']) ? $leaderboard[$nickname]['waste'] : 0;
+// Find the player's row in the list-style leaderboard
+$me = [
+    'quiz' => 0,
+    'waste' => 0,
+    'overall' => 0,
+    'time_quiz' => 0,
+    'time_waste' => 0
+];
+foreach (getLeaderboard() as $r) {
+    if (strcasecmp($r['nickname'], $nickname) === 0) {
+        $me = $r;
+        break;
+    }
+}
+$total_time = $me['time_quiz'] + $me['time_waste'];
 
-// Reset session variables
-unset($_SESSION['overall_points']); // Reset overall points
-unset($_SESSION['current_quiz']);   // Reset current quiz data
-unset($_SESSION['correct']);         // Reset correct answer count
-unset($_SESSION['incorrect']);       // Reset incorrect answer count
-unset($_SESSION['nickname']);        // Optionally unset the nickname to log out the user
+// (Optional) clear session after we read the values
+// $_SESSION = []; session_destroy();
 
-session_destroy(); // Destroy the session
+function h($s)
+{
+    return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+}
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
     <meta charset="UTF-8">
-    <title>Challenge FUN - Exit</title>
-</head>
-<style>
-    body {
-        font-family: 'Prompt', Arial, sans-serif;
-        background: #ecfdf5;
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
+    <title>ออกจากเกม</title>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: #f5fce8;
+            color: #234;
+            margin: 0;
+            padding: 40px
+        }
 
-    h1 {
-        color: #2ea87c;
-        font-size: 2.2em;
-        margin-bottom: 0.2em;
-        margin-top: 0.5em;
-        font-weight: 800;
-        letter-spacing: 1px;
-    }
+        .card {
+            max-width: 720px;
+            margin: auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #dcf5e8;
+            padding: 24px
+        }
 
-    p {
-        color: #3c7461;
-        font-size: 1.18em;
-        margin: 0.2em 0 0.5em 0;
-        font-weight: 500;
-    }
+        h1 {
+            margin-top: 0;
+            color: #38a169
+        }
 
-    strong {
-        color: #14995b;
-    }
+        .row {
+            margin: 8px 0
+        }
 
-    .btn-newQ {
-        font-size: 1em;
-        font-weight: bold;
-        padding: 0.67em 2.1em;
-        color: #fff;
-        border: none;
-        border-radius: 13px;
-        cursor: pointer;
-        background: linear-gradient(90deg, #8ff3a8 0%, #5ce4c0 100%);
-        box-shadow: 0 4px 18px #c1f4d9;
-        margin-top: 2em;
-        transition: background 0.17s, box-shadow 0.17s;
-        letter-spacing: 1.2px;
-    }
+        .muted {
+            color: #6b7280
+        }
 
-    .btn-newQ:hover {
-        background: linear-gradient(90deg, #5ce4c0 0%, #8ff3a8 100%);
-        box-shadow: 0 6px 28px #b9ffdc;
-    }
-
-    form {
-        margin-top: 1.5em;
-    }
-</style>
-<link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet">
-
+        .btn {
+            margin-top: 16px;
+            padding: 10px 16px;
+            border: 1px solid #38a169;
+            border-radius: 12px;
+            background: #38a169;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Goodbye, <?php echo htmlspecialchars($nickname); ?></h1>
-    <p>Quiz Points: <?php echo $quiz_points; ?></p>
-    <p>Waste Points: <?php echo $waste_points; ?></p>
-    <p><strong>Total Overall Points:</strong> <?php echo $overall_points; ?></p>
-    <form action="menu.php" method="post">
-        <button type="submit" class="btn-newQ">Start New Game</button>
-    </form>
+    <div class="card">
+        <h1>ขอบคุณที่เล่น, <?= h($nickname) ?></h1>
+        <div class="row">Quiz: <strong><?= (int) $me['quiz'] ?></strong> คะแนน — เวลา
+            <strong><?= fmtMMSS($me['time_quiz']) ?></strong></div>
+        <div class="row">Waste: <strong><?= (int) $me['waste'] ?></strong> คะแนน — เวลา
+            <strong><?= fmtMMSS($me['time_waste']) ?></strong></div>
+        <div class="row"><strong>รวม:</strong> <?= (int) $me['overall'] ?> คะแนน — เวลา
+            <strong><?= fmtMMSS($total_time) ?></strong></div>
+        <form action="menu.php" method="post">
+            <button type="submit" class="btn">เริ่มเกมใหม่</button>
+        </form>
+        <form action="index.php" method="get">
+            <button type="submit" class="btn-newQ">กลับไปหน้าแรก</button>
+        </form>
+    </div>
     <script>sessionStorage.removeItem("timeLeft");</script>
 </body>
 

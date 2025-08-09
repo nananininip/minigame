@@ -153,12 +153,8 @@ function h($s)
 
 <body>
     <div class="navbar">
-        <div class="brand">Leaderboard</div>
-        <div class="navbar-buttons">
-            <form action="exit.php" method="post" style="display: inline;">
-                <button type="submit" class="btn-exit">Exit</button>
-            </form>
-        </div>
+        <span class="navbar-brand">Top 10 ผู้เล่น</span>
+        <a href="menu.php" class="btn-main">กลับเมนู</a>
     </div>
 
     <div class="wrap">
