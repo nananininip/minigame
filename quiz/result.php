@@ -7,10 +7,10 @@ if (!isset($_SESSION['nickname'])) {
 }
 $nickname  = $_SESSION['nickname'];
 
-// Score sent from quiz.php (if we just finished quiz)
+// If we just finished quiz, its points come via GET (or session fallback)
 $quizFromGet = isset($_GET['score']) ? (int)$_GET['score'] : (isset($_SESSION['score']) ? (int)$_SESSION['score'] : 0);
 
-// Read current best-from-server
+// Read current saved row (best so far)
 $server = ['quiz'=>0,'waste'=>0,'time_quiz'=>0,'time_waste'=>0,'overall'=>0];
 foreach (getLeaderboard() as $r) {
     if (strcasecmp($r['nickname'], $nickname) === 0) { $server = $r; break; }
@@ -44,7 +44,7 @@ function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
       <div class="pill">Waste: <strong id="wasteScore">กำลังดึง…</strong></div>
       <div class="pill">รวม: <strong id="totalScore">–</strong></div>
     </div>
-    <div class="muted">ระบบจะอัปเดตตารางคะแนนและเวลาที่ใช้จากรอบ Waste ให้อัตโนมัติ</div>
+    <div class="muted">ระบบจะอัปเดตคะแนนและเวลาจากเกม Waste ที่เล่นรอบนี้ให้อัตโนมัติ</div>
 
     <div class="actions">
       <a class="btn" href="leaderboard.php">ดู Leaderboard</a>
@@ -54,43 +54,39 @@ function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 
 <script>
 (function(){
-  // Server values (best so far)
+  // Best values from server row
   const server = {
     quiz:  <?= (int)$server['quiz'] ?>,
-    waste: <?= (int)$server['waste'] ?>,
+    waste: <?= (int)$server['waste'] ?>
   };
 
-  // Local values from this session (present only after WASTE)
+  // Local values present only after Waste game
   const localWaste = parseInt(localStorage.getItem('waste_score') || '0', 10) || 0;
   const localWasteTime = parseInt(localStorage.getItem('waste_time') || '0', 10) || 0;
 
-  // Quiz value can come from GET (quiz run) or server (previous best)
   const quizFromGet = <?= (int)$quizFromGet ?>;
   const quizBest = Math.max(quizFromGet, server.quiz);
-
-  // Waste to display = best(server vs local)
   const wasteBest = Math.max(server.waste, localWaste);
 
-  // Update UI
-  document.getElementById('wasteScore').textContent = wasteBest;
+  // Show combined best
   document.getElementById('quizScore').textContent  = quizBest;
+  document.getElementById('wasteScore').textContent = wasteBest;
   document.getElementById('totalScore').textContent = quizBest + wasteBest;
 
-  // If we just finished waste (have local info), post it once
+  // If we have waste info locally, post it once (maps to time_waste on server)
   if (localWaste || localWasteTime) {
     const params = new URLSearchParams();
     params.set('nickname', '<?= h($nickname) ?>');
-    params.set('quiz', quizBest);                 // send current best quiz
-    params.set('waste', Math.max(server.waste, localWaste)); // best waste
-    params.set('overall', quizBest + Math.max(server.waste, localWaste));
-    params.set('time_used', localWasteTime);      // counts into waste time bucket on server
+    params.set('quiz', quizBest);
+    params.set('waste', wasteBest);
+    params.set('overall', quizBest + wasteBest);
+    params.set('time_used', Math.max(0, localWasteTime)); // waste time delta
 
     fetch('save_leaderboard.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString()
     }).then(()=>{
-      // Clear local so we don't re-post on refresh
       localStorage.removeItem('waste_score');
       localStorage.removeItem('waste_time');
     }).catch(()=>{ /* ignore */ });
