@@ -1,58 +1,89 @@
-// Smooth countdown for the quiz page
-(function () {
-  // Default quiz duration (seconds). Keep in sync with PHP $totalTime.
-  var TOTAL = 50;
+;(function () {
+  if (window.__quizTimerRAF) cancelAnimationFrame(window.__quizTimerRAF);
+  window.__quizTimerRAF = null;
 
-  var label = document.getElementById("timeLeft");
-  var bar = document.getElementById("timerBar");
-  if (!label || !bar) return;
+  var wrap = document.querySelector('.progress-bar-bg') || document.querySelector('.timer-wrap');
+  if (!wrap) return;
 
-  // Read remaining seconds rendered by PHP on page load
-  var initial = parseInt(label.textContent, 10);
-  if (!isFinite(initial) || initial < 0) initial = TOTAL;
+  var total = parseInt(wrap.dataset.total || '0', 10);
+  var remaining = parseInt(wrap.dataset.left || wrap.dataset.timeLeft || '0', 10);
+  if (!isFinite(total) || total <= 0) total = 1;
+  if (!isFinite(remaining) || remaining < 0) remaining = 0;
 
-  var endTime = Date.now() + initial * 1000;
-  bar.style.transition = "width 100ms linear";
+  var timeLeftEl = document.getElementById('timeLeft');
+  var bar = document.getElementById('timerBar');
+  var form = document.getElementById('quizForm') || document.querySelector('form');
 
-  function updateUI(now) {
-    var remainingMs = Math.max(0, endTime - now);
-    var remainingSec = Math.ceil(remainingMs / 1000);
-
-    // Label
-    label.textContent = remainingSec;
-
-    // Progress bar (from full to 0)
-    var pct = (remainingMs / (TOTAL * 1000)) * 100;
-    if (pct < 0) pct = 0;
-    if (pct > 100) pct = 100;
-    bar.style.width = pct + "%";
+  // Ensure hidden field for forced finish
+  var forceInp = document.getElementById('force_finish');
+  if (!forceInp && form) {
+    forceInp = document.createElement('input');
+    forceInp.type = 'hidden';
+    forceInp.name = 'force_finish';
+    forceInp.id = 'force_finish';
+    forceInp.value = '0';
+    form.appendChild(forceInp);
   }
+
+  var submitted = false;
+  function disableFormOnce() {
+    if (!form) return;
+    var btns = form.querySelectorAll('button, input[type="submit"]');
+    btns.forEach(function (b) { b.disabled = true; });
+  }
+  function submitFinish() {
+    if (submitted || !form) return;
+    submitted = true;
+    forceInp.value = '1';
+    disableFormOnce();
+    setTimeout(function () { form.submit(); }, 0);
+  }
+
+  var endTime = Date.now() + remaining * 1000;
+  var lastWhole = remaining;
 
   function tick() {
     var now = Date.now();
-    updateUI(now);
+    var ms = Math.max(0, endTime - now);
+    var pct = Math.max(0, Math.min(100, (ms / (total * 1000)) * 100));
+    if (bar) bar.style.width = pct + '%';
 
-    if (now >= endTime) {
-      // Time up → let server handle end state
-      window.location.href = "quiz.php?timeout=1";
+    var secs = Math.floor(ms / 1000);
+    if (secs !== lastWhole) {
+      lastWhole = secs;
+      if (timeLeftEl) timeLeftEl.textContent = Math.max(0, secs);
+    }
+
+    if (ms <= 0) {
+      if (bar) bar.style.width = '0%';
+      if (timeLeftEl) timeLeftEl.textContent = '0';
+      submitFinish();
       return;
     }
-    requestAnimationFrame(tick);
+    window.__quizTimerRAF = requestAnimationFrame(tick);
   }
 
-  // Start
-  // Set starting width based on initial seconds left
-  bar.style.width = (initial / TOTAL) * 100 + "%";
-  requestAnimationFrame(tick);
+  if (bar) bar.style.width = (remaining / total * 100) + '%';
+  if (timeLeftEl) timeLeftEl.textContent = remaining;
+  window.__quizTimerRAF = requestAnimationFrame(tick);
 
-  // If page returns from bfcache, recompute timing
-  window.addEventListener("pageshow", function (e) {
+  window.addEventListener('pageshow', function (e) {
     if (e.persisted) {
-      var current = parseInt(label.textContent, 10);
-      if (isFinite(current) && current > 0) {
-        endTime = Date.now() + current * 1000;
+      var cur = parseInt(timeLeftEl && timeLeftEl.textContent, 10);
+      if (isFinite(cur) && cur >= 0) {
+        endTime = Date.now() + cur * 1000;
+        lastWhole = cur + 1;
+        if (bar) bar.style.width = (cur / total * 100) + '%';
       }
-      requestAnimationFrame(tick);
+      if (window.__quizTimerRAF) cancelAnimationFrame(window.__quizTimerRAF);
+      window.__quizTimerRAF = requestAnimationFrame(tick);
     }
   });
+
+  if (form) {
+    form.addEventListener('submit', function () {
+      submitted = true;
+      if (window.__quizTimerRAF) cancelAnimationFrame(window.__quizTimerRAF);
+    });
+  }
 })();

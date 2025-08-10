@@ -17,8 +17,10 @@ if (!isset($_SESSION['quiz_sequence'])) {
     $_SESSION['quiz_current'] = 0;
     $_SESSION['score'] = 0;               // quiz points (10 per correct)
     $_SESSION['start_time'] = time();
-    if (!isset($_SESSION['waste_score']))
-        $_SESSION['waste_score'] = 0; // keep if already set
+    if (!isset($_SESSION['waste_score'])) $_SESSION['waste_score'] = 0; // keep if already set
+}
+if (!isset($_SESSION['quiz_current_answered'])) {
+    $_SESSION['quiz_current_answered'] = []; // avoid undefined index warnings
 }
 
 $questions = $_SESSION['quiz_sequence'];
@@ -27,13 +29,12 @@ $currentIndex = $_SESSION['quiz_current'];
 // ---- Helper: save to leaderboard (merge, add time) ----
 function save_leaderboard_now()
 {
-    $nickname = $_SESSION['nickname'];
-    $quiz_score = isset($_SESSION['score']) ? (int) $_SESSION['score'] : 0;      // points
+    $nickname    = $_SESSION['nickname'];
+    $quiz_score  = isset($_SESSION['score']) ? (int) $_SESSION['score'] : 0; // points
     $waste_score = isset($_SESSION['waste_score']) ? (int) $_SESSION['waste_score'] : 0;
-    $time_used = time() - (int) $_SESSION['start_time'];                        // seconds this quiz run
+    $time_used   = max(0, time() - (int) ($_SESSION['start_time'] ?? time())); // seconds this quiz run
 
-    // Merge best scores; add time to total
-    // signature: saveResultToLeaderboard($nickname, $quizDelta, $wasteDelta, $overall_ignored, $timeDelta)
+    // saveResultToLeaderboard($nickname, $quizDelta, $wasteDelta, $timeQuizDelta, $timeWasteDelta)
     saveResultToLeaderboard($nickname, $quiz_score, 0, $time_used, 0);
     return [$quiz_score, $waste_score];
 }
@@ -42,7 +43,7 @@ function save_leaderboard_now()
 if (!isset($questions[$currentIndex])) {
     list($quiz_score, $waste_score) = save_leaderboard_now();
     $correctCount = (int) floor($quiz_score / 10);
-    $numWrong = max(0, $GLOBALS['numQuestions'] - $correctCount);
+    $numWrong = max(0, $numQuestions - $correctCount); // <-- fixed from $GLOBALS['numQuestions']
     unset($_SESSION['quiz_sequence'], $_SESSION['quiz_current'], $_SESSION['score'], $_SESSION['start_time'], $_SESSION['quiz_current_answered']);
     header("Location: result.php?score=$quiz_score&wrong=$numWrong");
     exit();
@@ -56,9 +57,11 @@ $feedback = "";
 $showNext = false;
 $quizOver = false;
 
-// Timer
-$elapsed = time() - $_SESSION['start_time'];
-$timeLeft = $totalTime - $elapsed;
+// ==== Timer (server is source of truth) ====
+$elapsed  = max(0, time() - (int)($_SESSION['start_time'] ?? time()));
+$timeLeft = max(0, $totalTime - $elapsed);
+
+// If time is up, end immediately
 if ($timeLeft <= 0) {
     $quizOver = true;
 }
@@ -100,19 +103,21 @@ if ($quizOver || $_SESSION['quiz_current'] >= $numQuestions) {
 ?>
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <title>Quiz Game</title>
     <link rel="stylesheet" href="style.css">
-    <script src="timer.js"></script>
 </head>
-
 <body>
-    <div class="progress-bar-bg">
+    <!-- add data so timer.js can sync accurately -->
+    <div class="progress-bar-bg"
+         data-total="<?php echo (int)$totalTime; ?>"
+         data-left="<?php echo (int)$timeLeft; ?>">
         <div id="timerBar" class="progress-bar"></div>
     </div>
-    <div class="timer-label">เวลาที่เหลือ: <span id="timeLeft"><?php echo max(0, $timeLeft); ?></span> วินาที</div>
+    <div class="timer-label">เวลาที่เหลือ:
+        <span id="timeLeft"><?php echo (int)$timeLeft; ?></span> วินาที
+    </div>
 
     <div class="quiz-container">
         <form id="quizForm" method="post" action="quiz.php" autocomplete="off">
@@ -143,15 +148,18 @@ if ($quizOver || $_SESSION['quiz_current'] >= $numQuestions) {
                 </div>
 
                 <?php if ($showNext && $selectedAnswer !== null): ?>
-                    <div
-                        class="feedback <?php echo ($selectedAnswer === $correctIndex) ? 'feedback-correct' : 'feedback-wrong'; ?>">
+                    <div class="feedback <?php echo ($selectedAnswer === $correctIndex) ? 'feedback-correct' : 'feedback-wrong'; ?>">
                         <?php echo $feedback; ?>
                     </div>
                     <button type="submit" name="next" class="btn-next">ข้อต่อไป</button>
                 <?php endif; ?>
             </div>
+            <!-- hidden field so timer.js can force-finish cleanly -->
+            <input type="hidden" name="force_finish" id="force_finish" value="0">
         </form>
     </div>
-</body>
 
+    <!-- load timer after DOM to avoid race -->
+    <script src="timer.js"></script>
+</body>
 </html>
