@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <head>
     <meta charset="UTF-8">
-    <title>MiniGame</title>
+    <title>Green Quest: Hi-Trust Mini Games</title>
     <style>
         /* === Hi-Trust Mini Game — Entry Page (FULL CSS) === */
 
@@ -86,11 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin: 0;
             font-family: 'Kanit', 'Prompt', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
             color: var(--ink);
-            background:
-                radial-gradient(28rem 28rem at 12% 8%, rgba(138, 217, 232, .28) 0%, rgba(138, 217, 232, 0) 55%),
-                radial-gradient(24rem 24rem at 85% 20%, rgba(122, 203, 150, .26) 0%, rgba(122, 203, 150, 0) 52%),
-                linear-gradient(180deg, var(--bg) 0%, #fffdf4 100%);
-            min-height: 100vh;
+            background: #f9ffe6;
             padding-top: var(--header-h);
             overflow-x: hidden;
         }
@@ -414,7 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 transition-duration: .01ms !important;
             }
         }
-</style>
+    </style>
 </head>
 
 <body>

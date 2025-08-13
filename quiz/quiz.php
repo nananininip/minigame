@@ -105,7 +105,7 @@ if ($quizOver || $_SESSION['quiz_current'] >= $numQuestions) {
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Quiz Game</title>
+    <title>Green Quest: Hi-Trust Quiz Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>

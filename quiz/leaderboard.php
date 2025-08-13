@@ -48,7 +48,7 @@ function h($s)
 
 <head>
     <meta charset="UTF-8">
-    <title>Leaderboard</title>
+    <title>Green Quest: Hi-Trust Mini Games</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* ============ CUTE PASTEL THEME ============ */

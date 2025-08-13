@@ -17,6 +17,8 @@ if (!isset($_SESSION['nickname'])) {
     </script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@600;700;800&family=Prompt:wght@400;600;700&display=swap');
+
         /* === GLOBAL RESETS === */
         * {
             box-sizing: border-box;
@@ -104,7 +106,7 @@ if (!isset($_SESSION['nickname'])) {
             padding: 48px 26px 46px 26px;
             border-radius: 28px;
             box-shadow: 0 10px 40px #c4ffd8a3, 0 2px 16px #b6d6ff33;
-            max-width: 500px;
+            max-width: 800px;
             width: 90vw;
             text-align: center;
             position: relative;
@@ -216,7 +218,7 @@ if (!isset($_SESSION['nickname'])) {
         </div>
     </nav>
     <div class="container menu-container">
-        <h1>ยินดีต้อนรับสู่เกม, <?php echo htmlspecialchars($_SESSION['nickname']); ?></h1>
+        <h1>ยินดีต้อนรับ คุณ<?php echo htmlspecialchars($_SESSION['nickname']); ?> สู่เกมของเรา</h1>
         <div class="menu-buttons">
             <button class="menu-btn" onclick="location.href='quiz.php'">🧠 ควิซ</button>
             <button class="menu-btn" onclick="location.href='/minigame/game/waste.html'">🗑️ เกมแยกขยะ</button>
