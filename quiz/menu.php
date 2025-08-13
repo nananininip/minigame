@@ -104,7 +104,7 @@ if (!isset($_SESSION['nickname'])) {
             padding: 48px 26px 46px 26px;
             border-radius: 28px;
             box-shadow: 0 10px 40px #c4ffd8a3, 0 2px 16px #b6d6ff33;
-            max-width: 480px;
+            max-width: 500px;
             width: 90vw;
             text-align: center;
             position: relative;
@@ -156,8 +156,8 @@ if (!isset($_SESSION['nickname'])) {
             font-size: 1.22rem;
             font-weight: 700;
             padding: 28px 20px 24px 20px;
-            min-width: 130px;
-            width: 160px;
+            min-width: 175px;
+            width: 170px;
             max-width: 92vw;
             box-shadow: 0 7px 26px #e7fff522, 0 2px 12px #d7fffc;
             margin-bottom: 10px;
@@ -208,7 +208,7 @@ if (!isset($_SESSION['nickname'])) {
 
 <body>
     <nav class="navbar">
-        <a class="navbar-brand" href="menu.php">Menu</a>
+        <a class="navbar-brand" href="menu.php">หน้าหลัก</a>
         <div class="navbar-buttons">
             <form action="exit.php" method="post" style="display: inline;">
                 <button type="submit" class="btn-exit">Exit</button>
@@ -216,11 +216,11 @@ if (!isset($_SESSION['nickname'])) {
         </div>
     </nav>
     <div class="container menu-container">
-        <h1>Welcome, <?php echo htmlspecialchars($_SESSION['nickname']); ?></h1>
+        <h1>ยินดีต้อนรับสู่เกม, <?php echo htmlspecialchars($_SESSION['nickname']); ?></h1>
         <div class="menu-buttons">
-            <button class="menu-btn" onclick="location.href='quiz.php'">🌱 Quiz Game</button>
-            <button class="menu-btn" onclick="location.href='/minigame/game/waste.html'">🗑️ Waste Sorting Game</button>
-            <button class="menu-btn" onclick="location.href='leaderboard.php'">🏆 Leaderboard</button>
+            <button class="menu-btn" onclick="location.href='quiz.php'">🧠 ควิซ</button>
+            <button class="menu-btn" onclick="location.href='/minigame/game/waste.html'">🗑️ เกมแยกขยะ</button>
+            <button class="menu-btn" onclick="location.href='leaderboard.php'">🏆 อันดับผู้เล่น</button>
         </div>
 
     </div>

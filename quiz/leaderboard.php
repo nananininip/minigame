@@ -51,117 +51,365 @@ function h($s)
     <title>Leaderboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --green: #38a169;
-            --bg: #f5fce8;
-            --card: #fff;
-            --text: #1f2937;
-            --muted: #6b7280;
-            --tab: #e5f7ee
-        }
-
+        /* ============ CUTE PASTEL THEME ============ */
         * {
-            box-sizing: border-box
+            box-sizing: border-box;
         }
 
+        :root {
+            --bg: #f9ffe6;
+            --paper: #ffffff;
+            --ink: #264f3a;
+            --muted: #6a8f7c;
+
+            --mint-50: #f0fff4;
+            --mint-100: #e7fff2;
+            --mint-200: #d9ffea;
+            --mint-300: #c8ffe1;
+
+            --green-400: #2aa46a;
+            --green-500: #1e8a58;
+
+            --tab-idle: #eafff0;
+            --tab-active: #d5ffe6;
+
+            --row-border: #e7f6e6;
+
+            --glow: 0 12px 40px #d9ffe9, 0 4px 18px #d7fffc;
+        }
+
+        /* ===== Page ===== */
         body {
             margin: 0;
             font-family: 'Prompt', sans-serif;
-            background: var(--bg);
-            color: var(--text)
+            background: radial-gradient(1200px 800px at 20% -10%, #fff 0, #f8fff2 45%, var(--bg) 100%);
+            color: var(--ink);
         }
 
         .navbar {
+            width: 100vw;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 0 4px 24px #c6ffc680;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 16px 24px;
-            background: #fff;
-            box-shadow: 0 2px 16px #dcf5e8
+            align-items: center;
+            padding: 20px 32px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 20;
         }
 
-        .brand {
-            font-weight: 700;
-            color: var(--green)
+        .navbar-brand {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #209765;
+            padding: 7px 30px 7px 26px;
+            box-shadow: 0 2px 10px #bcffdb30;
+            text-decoration: none;
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+            letter-spacing: 1.3px;
+            border-bottom: 2px solid #b3ffc9;
         }
 
+        .navbar-brand:hover {
+            background: linear-gradient(90deg, #f2ffe8 10%, #e0ffd9 90%);
+            color: #1a714e;
+            box-shadow: 0 4px 14px #b8ffb370;
+        }
+
+        .navbar-buttons {
+            display: flex;
+            gap: 1.1rem;
+        }
+
+        .btn-main {
+            text-decoration: none;
+            background: linear-gradient(90deg, #baffc9 0, #b1ffe9 100%);
+            color: #1f7f52;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 800;
+            box-shadow: 0 4px 14px #c9ffe1;
+            transition: transform .12s, box-shadow .15s, background .18s;
+        }
+
+        .btn-main:hover {
+            background: linear-gradient(90deg, #9cf3b0 0, #a7f7eb 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px #caffdf;
+        }
+
+        /* ===== Layout wrapper ===== */
         .wrap {
             max-width: 980px;
-            margin: 24px auto;
-            padding: 0 16px
+            margin: 112px auto 48px;
+            padding: 0 16px;
         }
 
+        /* ===== Card ===== */
+        .card {
+            background: var(--paper);
+            border-radius: 22px;
+            box-shadow: var(--glow);
+            padding: 16px;
+            border: 2px solid var(--mint-300);
+            animation: pop .45s cubic-bezier(.2, .9, .3, 1);
+        }
+
+        @keyframes pop {
+            from {
+                transform: translateY(10px) scale(.985);
+                opacity: 0
+            }
+
+            to {
+                transform: none;
+                opacity: 1
+            }
+        }
+
+        /* ===== Tabs (pill buttons) ===== */
+        /* === Bigger, cuter tab buttons === */
         .tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            /* bigger spacing */
+            margin: 6px 0 18px;
         }
 
         .tab-btn {
-            border: 1px solid var(--green);
-            background: #fff;
-            padding: 10px 14px;
+            appearance: none;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: .6ch;
+
+            /* size */
+            font-weight: 900;
+            font-size: 1.12rem;
+            /* bigger text */
+            letter-spacing: .2px;
+            padding: .9em 1.4em;
+            /* bigger pill */
             border-radius: 999px;
-            font-weight: 700;
-            cursor: pointer
+
+            /* cute pastel look */
+            background: linear-gradient(180deg, #ffffff 0, #f5fff9 100%);
+            border: 2px solid #c6ffd9;
+            color: #208b5a;
+            box-shadow: 0 8px 24px #dfffee, 0 2px 8px #d7fffc;
+
+            transition:
+                transform .14s ease,
+                box-shadow .18s ease,
+                background .18s ease,
+                border-color .18s ease;
         }
 
+        .tab-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            background: linear-gradient(180deg, #f9fffb 0, #eafff1 100%);
+            box-shadow: 0 12px 30px #d2ffea;
+        }
+
+        .tab-btn:active {
+            transform: translateY(-1px) scale(.99);
+        }
+
+        /* Active state: brighter and with an underline indicator */
         .tab-btn.active {
-            background: var(--tab)
+            background:  #fffae2;
+            border-color: #a9ffd1;
+            color: #137e4e;
+            box-shadow: 0 16px 36px #caffdf, inset 0 -2px 0 #b6ffd1;
         }
 
-        .card {
-            background: var(--card);
-            border-radius: 16px;
-            box-shadow: 0 4px 24px #dcf5e8;
-            padding: 8px
+        .tab-btn::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -6px;
+            width: 64%;
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #a9ffd1, #a7f7eb);
+            transform: translateX(-50%) scaleX(0);
+            transform-origin: center;
+            transition: transform .22s ease;
         }
 
+        .tab-btn.active::after {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        /* Cute emojis without changing HTML */
+        .tab-btn[data-tab="overall"]::before {
+            content: "🏆";
+        }
+
+        .tab-btn[data-tab="quiz"]::before {
+            content: "🧠";
+        }
+
+        .tab-btn[data-tab="waste"]::before {
+            content: "🗑️";
+        }
+
+        /* Focus visibility (a11y) */
+        .tab-btn:focus-visible {
+            outline: 3px solid #9cf3b0;
+            outline-offset: 3px;
+        }
+
+        /* Mobile tweaks */
+        @media (max-width: 740px) {
+            .tab-btn {
+                font-size: 1.05rem;
+                padding: .8em 1.1em;
+            }
+        }
+
+
+        /* ===== Table (soft, centered, sticky head) ===== */
         table {
             width: 100%;
-            border-collapse: collapse
+            border-collapse: collapse;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(180deg, #eafff2 0, #deffe9 100%);
+            color: #2da067;
+            text-align: center;
+            font-weight: 900;
+            padding: .9em .6em;
+            border-bottom: 2px solid #bff1d0;
+            letter-spacing: .3px;
+            z-index: 1;
         }
 
         th,
         td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #eef5ef;
-            text-align: left
+            font-size: 1.02rem;
         }
 
-        th {
-            font-size: 14px
+        td {
+            text-align: center;
+            padding: .78em .6em;
+            border-bottom: 1px solid var(--row-border);
+            color: #2c6b4c;
+            background: #fff;
+            transition: background .14s ease, transform .08s ease;
         }
 
+        tbody tr:hover td {
+            background: #f7fff9;
+        }
+
+        /* Rank column */
         .rank {
-            width: 64px;
-            font-weight: 700;
-            color: var(--green)
+            width: 60px;
+            font-weight: 900;
+            color: var(--green-500);
         }
 
+        /* ===== Cute top-3 highlight (no extra classes needed) ===== */
+        tbody tr:nth-child(1) td {
+            background: linear-gradient(90deg, #fff9d9 0, #edfff2 100%);
+            font-weight: 900;
+            color: #b19619;
+        }
+
+        tbody tr:nth-child(2) td {
+            background: linear-gradient(90deg, #effef6 0, #e7f7ff 100%);
+            font-weight: 800;
+            color: #58a89a;
+        }
+
+        tbody tr:nth-child(3) td {
+            background: linear-gradient(90deg, #fff0e2 0, #f2fff2 100%);
+            font-weight: 800;
+            color: #d08a4c;
+        }
+
+        /* ===== Subtle row lift on click/keyboard focus ===== */
+        tbody tr:active td {
+            transform: scale(.997);
+        }
+
+        /* ===== Utilities ===== */
         .muted {
             color: var(--muted);
-            font-size: 13px
+            font-size: .9rem;
         }
 
         .hidden {
-            display: none
+            display: none;
+        }
+
+        /* ===== Focus styles (a11y) ===== */
+        .tab-btn:focus-visible,
+        .btn-main:focus-visible,
+        .navbar-brand:focus-visible {
+            outline: 3px solid #9cf3b0;
+            outline-offset: 2px;
+            border-radius: 14px;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 740px) {
+            .navbar {
+                padding: 14px 18px;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .wrap {
+                margin: 102px auto 36px;
+            }
+
+            th,
+            td {
+                font-size: .98rem;
+            }
+
+            .tab-btn {
+                padding: 9px 14px;
+            }
+        }
+
+        /* ===== Reduced motion support ===== */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="navbar">
-        <span class="navbar-brand">Top 10 ผู้เล่น</span>
+        <span class="navbar-brand">อันดับผู้เล่น</span>
         <a href="menu.php" class="btn-main">กลับเมนู</a>
     </div>
 
     <div class="wrap">
         <div class="tabs">
-            <button class="tab-btn active" data-tab="overall">Overall</button>
-            <button class="tab-btn" data-tab="quiz">Quiz</button>
-            <button class="tab-btn" data-tab="waste">Waste</button>
+            <button class="tab-btn active" data-tab="overall">คะแนนรวม</button>
+            <button class="tab-btn" data-tab="quiz">ควิซ</button>
+            <button class="tab-btn" data-tab="waste">เกมแยกขยะ</button>
         </div>
 
         <!-- OVERALL -->
@@ -170,9 +418,9 @@ function h($s)
                 <thead>
                     <tr>
                         <th class="rank">#</th>
-                        <th>Nickname</th>
-                        <th>Score (Quiz+Waste)</th>
-                        <th>Time (Quiz+Waste)</th>
+                        <th>ชื่อผู้เล่น</th>
+                        <th>คะแนนรวม</th>
+                        <th>เวลาที่ใช้ทั้งหมด</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -196,9 +444,9 @@ function h($s)
                 <thead>
                     <tr>
                         <th class="rank">#</th>
-                        <th>Nickname</th>
-                        <th>Quiz Score</th>
-                        <th>Quiz Time</th>
+                        <th>ชื่อผู้เล่น</th>
+                        <th>คะแนน</th>
+                        <th>เวลาที่ใช้</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -221,9 +469,9 @@ function h($s)
                 <thead>
                     <tr>
                         <th class="rank">#</th>
-                        <th>Nickname</th>
-                        <th>Waste Score</th>
-                        <th>Waste Time</th>
+                        <th>ชื่อผู้เล่น</th>
+                        <th>คะแนน</th>
+                        <th>เวลาที่ใช้</th>
                     </tr>
                 </thead>
                 <tbody>
