@@ -15,9 +15,9 @@ if (!isset($_SESSION['nickname'])) {
         // Reset quiz timer when user lands on the menu
         sessionStorage.removeItem("timeLeft");
     </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@600;700;800&family=Prompt:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
 
         /* === GLOBAL RESETS === */
         * {
@@ -28,7 +28,7 @@ if (!isset($_SESSION['nickname'])) {
             min-height: 100vh;
             margin: 0;
             padding: 0;
-            font-family: 'Kanit', 'Prompt', Arial, sans-serif;
+            font-family: 'Kanit', 'Prompt', sans-serif;
             background: #f9ffe6;
             color: #2d4632;
             display: flex;
@@ -151,6 +151,7 @@ if (!isset($_SESSION['nickname'])) {
         }
 
         .menu-btn {
+            font-family: 'Prompt';
             background: linear-gradient(120deg, #fffbe6 10%, #d6ffe6 90%);
             color: #222;
             border: none;
@@ -200,6 +201,7 @@ if (!isset($_SESSION['nickname'])) {
             }
 
             .menu-btn {
+                font-family: 'Prompt';
                 width: 94vw;
                 font-size: 1.08rem;
                 padding: 22px 0 17px 0;
@@ -218,7 +220,7 @@ if (!isset($_SESSION['nickname'])) {
         </div>
     </nav>
     <div class="container menu-container">
-        <h1>ยินดีต้อนรับ คุณ<?php echo htmlspecialchars($_SESSION['nickname']); ?> สู่เกมของเรา</h1>
+        <h1>ยินดีต้อนรับ คุณ <?php echo htmlspecialchars($_SESSION['nickname']); ?> สู่เกมของเรา</h1>
         <div class="menu-buttons">
             <button class="menu-btn" onclick="location.href='quiz.php'">🧠 ควิซ</button>
             <button class="menu-btn" onclick="location.href='/minigame/game/waste.html'">🗑️ เกมแยกขยะ</button>
