@@ -1,9 +1,9 @@
 <?php
 session_start();
-require 'functions.php';
+require '../functions.php';
 
 if (!isset($_SESSION['nickname'])) {
-    header('Location: index.php');
+    header('Location: ../index.php');
     exit();
 }
 $nickname = $_SESSION['nickname'];
@@ -49,6 +49,7 @@ function h($s)
         }
 
         body {
+            font-family: 'Prompt', sans-serif;
             margin: 0;
             font-family: 'Prompt', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
             color: var(--ink);
@@ -115,6 +116,7 @@ function h($s)
         }
 
         .btn {
+            font-family: 'Prompt', sans-serif;
             --h: 52px;
             font-size: clamp(1rem, 1.4vw, 1.1rem);
             height: var(--h);
@@ -204,7 +206,7 @@ function h($s)
         <div class="actions">
             <form action="menu.php" method="post"><button type="submit" class="btn btn-menu">กลับไปหน้าเมนู</button>
             </form>
-            <form action="index.php" method="get"><button type="submit" class="btn btn-exit">ออกจากเกม</button></form>
+            <form action="../index.php" method="get"><button type="submit" class="btn btn-exit">ออกจากเกม</button></form>
         </div>
     </div>
 

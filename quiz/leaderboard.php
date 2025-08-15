@@ -1,5 +1,5 @@
 <?php
-require 'functions.php';
+require '../functions.php';
 $rows = getLeaderboard();
 
 // === Build views ===
@@ -101,6 +101,7 @@ function h($s)
         }
 
         .navbar-brand {
+            font-family: 'Prompt', sans-serif;
             font-size: 1.7rem;
             font-weight: 800;
             color: #209765;
@@ -124,6 +125,7 @@ function h($s)
         }
 
         .btn-main {
+            font-family: 'Prompt', sans-serif;
             text-decoration: none;
             background: linear-gradient(90deg, #baffc9 0, #b1ffe9 100%);
             color: #1f7f52;
@@ -182,6 +184,7 @@ function h($s)
         }
 
         .tab-btn {
+            font-family: 'Prompt', sans-serif;
             appearance: none;
             border: none;
             cursor: pointer;

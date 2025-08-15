@@ -1,9 +1,9 @@
 <?php
 session_start();
-require 'functions.php';
+require '../functions.php';
 
 if (!isset($_SESSION['nickname'])) {
-  header('Location: index.php');
+  header('Location: ../index.php');
   exit();
 }
 $nickname = $_SESSION['nickname'];

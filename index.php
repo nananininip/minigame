@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['incorrect'] = 0;
         unset($_SESSION['current_quiz']);
 
-        header('Location: menu.php');
+        header('Location: quiz/menu.php');
         exit();
     }
 }
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         /* === Hi-Trust Mini Game — Entry Page (FULL CSS) === */
 
         /* Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800&family=Prompt:wght@400;600;700&display=swap');
+        @import url("https://fonts.googleapis.com/css2?family=Prompt&display=swap");
 
         /* Theme tokens (single :root) */
         :root {
@@ -261,11 +261,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background: #ffffff;
             transform: translateY(-1px);
         }
-
+        
         /* Button (pill) */
         .btn-submit {
             order: 2;
             /* stays on first row */
+            font-family: 'Prompt' !important;
             flex: 0 0 auto;
             min-width: 160px;
             min-height: 52px;
