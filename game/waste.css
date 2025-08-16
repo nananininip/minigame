@@ -43,13 +43,16 @@ body {
   left: 32px;
   display: flex;
   align-items: center;
-  gap: 0; /* no flex gap */
-  padding: 6px 8px; /* tighter padding around logos */
+  gap: 0;
+  /* no flex gap */
+  padding: 6px 8px;
+  /* tighter padding around logos */
   background-color: #ffffff97;
   border-radius: 36px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 999;
-  width: auto; /* only as wide as needed for logos */
+  width: auto;
+  /* only as wide as needed for logos */
 }
 
 .logo-container img {
@@ -58,13 +61,16 @@ body {
 }
 
 .logo-container img:not([alt="R2R Logo"]) {
-  width: 170px; /* slightly smaller first logo */
+  width: 170px;
+  /* slightly smaller first logo */
   height: auto;
-  margin-right: -22px; /* tight overlap */
+  margin-right: -22px;
+  /* tight overlap */
 }
 
 .logo-container img[alt="R2R Logo"] {
-  width: 320px; /* larger R2R */
+  width: 320px;
+  /* larger R2R */
   height: auto;
   margin-top: 4px;
 }
@@ -158,10 +164,10 @@ body {
 }
 
 .question {
-  font-size: clamp(2.1rem, 3.6vw, 3rem);
+  font-size: clamp(1.0rem, 2.4vw, 2.6rem);
   /* a bit more */
   font-weight: 600;
-  margin-top: 2.6rem;
+  margin-top: 0.4rem;
   /* a bit more top space */
   margin-bottom: 1rem;
   text-align: center;
@@ -169,13 +175,13 @@ body {
 
 /* Timer */
 .timer {
-  margin: 0.7rem auto 1.6rem auto;
+  margin: 0.6rem auto 1.2rem auto;
   /* a bit more space */
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.7rem;
-  font-size: 1.4rem;
+  font-size: 1.0rem;
   /* a bit bigger */
   color: #333;
 }
@@ -243,8 +249,8 @@ body {
 .drag-instruction {
   font-size: 1.8rem;
   color: #555;
-  margin-top: 2.4rem;
-  margin-bottom: 2.4rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
   text-align: center;
 }
 
@@ -350,7 +356,7 @@ body {
 
 .score-summary {
   font-size: 2.0rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.2rem;
 }
 
 .mascot-final-box {
@@ -558,7 +564,7 @@ body {
   justify-content: center !important;
   align-items: flex-end !important;
   gap: clamp(.8rem, 2vw, 1.4rem) !important;
-  margin: .6rem auto 1rem !important;
+  margin: .2rem auto 0.8rem !important;
   max-width: 1000px !important;
 }
 
@@ -894,6 +900,7 @@ body {
     width: 140px;
     margin-right: -18px;
   }
+
   .logo-container img[alt="R2R Logo"] {
     width: 260px;
   }
@@ -905,6 +912,7 @@ body {
     width: 150px;
     margin-right: -20px;
   }
+
   .logo-container img[alt="R2R Logo"] {
     width: 280px;
   }
@@ -916,6 +924,7 @@ body {
     width: 150px;
     margin-right: -18px;
   }
+
   .logo-container img[alt="R2R Logo"] {
     width: 270px;
   }
@@ -923,13 +932,166 @@ body {
 
 /* iPad Air / Pro 11" Landscape (1194px wide) */
 @media (min-width: 1180px) and (max-width: 1200px) and (orientation: landscape) {
-  .logo-container img:not([alt="R2R Logo"]) {
-    width: 160px;
-    margin-right: -20px;
+  .game-card {
+    transform: none !important;
+    height: min(45vh, 540px) !important;
+    min-height: 540px !important;
+    margin-top: -0.5rem !important;
   }
+
+  .game-title {
+    font-size: clamp(1.6rem, 2.6vw, 1.9rem) !important;
+    margin-top: -4.5rem !important;
+    text-align: center;
+  }
+
+  .bins-row,
+  #bins {
+    gap: clamp(0.1rem, 0.6vw, 0.6rem) !important;
+    /* smaller gap */
+    margin-top: 5px !important;
+    padding: 0 1rem;
+  }
+
+    .bin-wrapper {
+    max-width: 60px !important;
+    margin-top: 10px;
+    /* narrower bins */
+    flex: 1;
+  }
+
+  .bin-drop {
+    flex: 0 1 130px !important;
+    height: clamp(100px, 21vw, 120px) !important;
+  }
+
+.bin-drop .bin-lid {
+    max-width: 100px !important;
+    margin-top: 15px;
+  }
+
+  .bin-drop .bin-body {
+    width: clamp(80px, 50%, 80px) !important;
+    margin-bottom: 5px;
+  }
+
+  #wasteResult {
+    font-size: clamp(0.4rem, 1.2vw, 1rem) !important;
+  }
+
+  #question,
+  .game-card #question {
+    font-size: clamp(0.005rem, 0.5, 0.005rem) !important;
+    /* even smaller */
+    margin-top: 0.02rem !important;
+    margin-bottom: -0.12rem !important;
+    text-align: center !important;
+    line-height: 1.2;
+  }
+
+  .timer {
+    font-size: clamp(0.2rem, 2.0vw, 1.4rem) !important;
+    margin-top: -0.9rem !important;
+    text-align: center;
+    position: relative;
+  }
+
+  #timerNum {
+    font-size: inherit !important;
+  }
+
+  .draggable-item img[src*="surgical_gown_cloth.svg"],
+  .draggable-item img[src*="surgical_gown_no_recycle.svg"],
+  .draggable-item img[src*="surgical_gown_recycle.svg"],
+  .draggable-item img[src*="juice.svg"],
+  .draggable-item img[src*="coffee.svg"] {
+    width: clamp(100px, 4vw, 160px) !important;
+    max-width: 160px !important;
+  }
+
+  .draggable-item img[src*="t-drape.svg"] {
+    width: clamp(80px, 16vw, 160px) !important;
+    max-width: 160px !important;
+  }
+
+  .draggable-item img {
+    width: clamp(60px, 20vw, 120px) !important;
+    max-width: 120px !important;
+  }
+
   .logo-container img[alt="R2R Logo"] {
-    width: 300px;
+    width: 100px !important;
+    height: 60px !important;
   }
+
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 110px !important;
+    height: 55px !important;
+  }
+
+  .character-left {
+    width: 150px !important;
+    left: 25px !important;
+    bottom: 15px !important;
+  }
+
+  .character-right {
+    width: 150px !important;
+    right: 25px !important;
+    bottom: 15px !important;
+  }
+
+    .mascot-final-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  padding: 1.6rem 1.8rem;
+  border-radius: 24px;
+  background: #f8f8f8;
+  max-width: 1000px;
+  margin: 2rem auto;
+}
+
+
+.mascot-img {
+  flex: 0 0 160px;
+  text-align: center;
+}
+
+.mascot-img img {
+  width: 100%;
+  max-width: 160px;
+}
+
+.mascot-text {
+  font-size: 0.4rem;
+  flex: 1;
+  text-align: left;
+}
+
+.mascot-text h2 {
+  font-size: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.mascot-text h2 span {
+  font-weight: bold;
+}
+
+.mascot-text h3 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  color: #555;
+}
+
+.mascot-text p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #333;
+}
 }
 
 /* iPad Pro 12.9" Portrait (1024px wide) */
@@ -938,6 +1100,7 @@ body {
     width: 160px;
     margin-right: -20px;
   }
+
   .logo-container img[alt="R2R Logo"] {
     width: 300px;
   }
@@ -949,6 +1112,7 @@ body {
     width: 180px;
     margin-right: -22px;
   }
+
   .logo-container img[alt="R2R Logo"] {
     width: 340px;
   }
@@ -956,110 +1120,232 @@ body {
 
 /* ===== 15" PC / Laptop — compact layout (1280–1600px) ===== */
 @media (min-width: 1200px) and (max-width: 1600px) {
-
-  /* Card / stage */
-  .game-card{
-    max-width: 980px !important;
-    height: auto !important;
-    min-height: 600px !important;
-    padding: 18px 22px !important;
-    border-radius: 18px !important;
-    margin-top: 0.2rem !important;
-  }
-
-  /* Top banner/title if you have one */
-  .page-title, .title-banner, .top-title{
-    font-size: clamp(1.2rem, 2.1vw, 1.6rem) !important;
-    padding: 10px 18px !important;
-  }
-
-  /* Game title inside the card */
-  .game-title{
-    font-size: clamp(1.4rem, 2.0vw, 1.8rem) !important;
+  .game-card {
+    transform: none !important;
+    height: min(45vh, 550px) !important;
+    min-height: 550px !important;
     margin-top: -0.6rem !important;
+  }
+
+  .game-title {
+    font-size: clamp(1.6rem, 3vw, 2rem) !important;
+    /* smaller title */
+    margin-top: -5rem !important;
     margin-bottom: 0.8rem !important;
+    text-align: center;
+  }
+
+  .bins-row,
+  #bins {
+    gap: clamp(0.4rem, 1.0vw, 1.0rem) !important;
+    /* smaller gap */
+    margin-top: -10px !important;
+    padding: 0 1rem;
+  }
+
+  .bin-wrapper {
+    max-width: 100px !important;
+    margin-top: -10px;
+    /* narrower bins */
+    flex: 1;
+  }
+
+  .bin-drop {
+    flex: 0 1 140px !important;
+    /* smaller bin size */
+    height: clamp(130px, 22vw, 160px) !important;
+    margin-top: 1.5rem !important;
+  }
+
+  .bin-drop .bin-lid {
+    max-width: 120px !important;
+    margin-top: 25px;
+  }
+
+  .bin-drop .bin-body {
+    width: clamp(100px, 60%, 120px) !important;
+    margin-bottom: 5px;
+  }
+
+  #wasteResult {
+    font-size: clamp(0.8rem, 1.8vw, 1rem) !important;
+  }
+
+  #question,
+  .game-card #question {
+    font-size: clamp(0.01rem, 0.5, 0.01rem) !important;
+    /* even smaller */
+    margin-top: 0.02rem !important;
+    margin-bottom: -0.12rem !important;
     text-align: center !important;
+    line-height: 1.2;
   }
 
-  /* The big question line */
-  #question, .game-card #question, .question-text{
-    font-size: clamp(1.05rem, 2.1vw, 1.5rem) !important;
-    line-height: 1.25 !important;
-    margin: 0.3rem 0 0.1rem !important;
-    text-align: center !important;
+  .timer {
+    font-size: clamp(0.8rem, 2.4vw, 1.6rem) !important;
+    /* more */
+    margin-top: -0.9rem !important;
+    text-align: center;
+    position: relative;
   }
 
-  /* Timer */
-  .timer{
-    font-size: clamp(1.1rem, 1.8vw, 1.4rem) !important;
-    margin-top: 0.1rem !important;
-    text-align: center !important;
-  }
-  #timerNum{ font-size: inherit !important; }
-
-  /* Bins row & spacing */
-  .bins-row, #bins{
-    gap: clamp(.8rem, 1.2vw, 1.4rem) !important;
-    padding: 0 .8rem !important;
-    justify-content: center !important;
-  }
-  .bin-wrapper{ max-width: 260px !important; flex: 1; }
-
-  .bin-drop{
-    flex: 0 1 150px !important;
-    height: clamp(140px, 16vw, 180px) !important;
-    margin-top: .4rem !important;
-  }
-  .bin-drop .bin-lid{ max-width: 140px !important; }
-  .bin-drop .bin-body{ width: clamp(130px, 76%, 170px) !important; }
-
-  /* Result text */
-  #wasteResult{
-    font-size: clamp(.9rem, 1.1vw, 1.02rem) !important;
+  #timerNum {
+    font-size: inherit !important;
   }
 
-  /* Waste item (question image) sizes */
+  /* Smaller waste item images */
   .draggable-item img[src*="surgical_gown_cloth.svg"],
   .draggable-item img[src*="surgical_gown_no_recycle.svg"],
   .draggable-item img[src*="surgical_gown_recycle.svg"],
   .draggable-item img[src*="juice.svg"],
-  .draggable-item img[src*="coffee.svg"]{
-    width: clamp(80px, 10vw, 120px) !important;
+  .draggable-item img[src*="coffee.svg"] {
+    width: clamp(60px, 12vw, 80px) !important;
+    max-width: 80px !important;
+  }
+
+  .draggable-item img[src*="t-drape.svg"] {
+    width: clamp(80px, 28vw, 120px) !important;
     max-width: 120px !important;
   }
-  .draggable-item img[src*="t-drape.svg"]{
-    width: clamp(100px, 14vw, 160px) !important;
-    max-width: 160px !important;
-  }
-  .draggable-item img{
-    width: clamp(95px, 12vw, 140px) !important;
-    max-width: 140px !important;
+
+  .draggable-item img {
+    width: clamp(80px, 25vw, 150px) !important;
+    max-width: 100px !important;
   }
 
-  /* Mascots (bottom corners) */
-  .character-left{
-    width: 180px !important;
-    left: 10px !important;
-    bottom: -10px !important;
-  }
-  .character-right{
-    width: 195px !important;
-    right: 10px !important;
-    bottom: -10px !important;
+  .character-left {
+    width: 140px !important;
+    /* smaller for mobile */
+    left: 8px !important;
+    bottom: -8px !important;
   }
 
-  /* Logo pill (top-left) */
-  .logo-container{
-    top: 22px !important;
-    left: 22px !important;
-    padding: 10px 18px !important;
-    border-radius: 28px !important;
-    gap: 0 !important;
+  .character-right {
+    width: 150px !important;
+    /* smaller for mobile */
+    right: 8px !important;
+    bottom: -8px !important;
   }
-  .logo-container img[alt="R2R Logo"]{
-    width: 360px !important; height: 74px !important; object-fit: contain !important;
+
+  .logo-container {
+    position: fixed;
+    top: 32px;
+    left: 32px;
+    display: flex;
+    gap: 0px;
+    /* no gap between logos */
+    align-items: center;
+    padding: 12px 24px;
+    background-color: #ffffff97;
+    border-radius: 36px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 999;
   }
-  .logo-container img:not([alt="R2R Logo"]){
-    width: 220px !important; height: 54px !important; object-fit: contain !important;
+
+  .logo-container img[alt="R2R Logo"] {
+    width: 400px;
+    /* increase only R2R logo size */
+    height: 80px;
+    object-fit: contain;
   }
+
+  .logo-container img:not([alt="R2R Logo"]) {
+    width: 250px;
+    height: 60px;
+    object-fit: contain;
+  }
+
+  /* Drag instruction — tighter vertical spacing */
+  .drag-instruction {
+    font-size: 1.8rem;
+    color: #555;
+    text-align: center;
+    line-height: 1.0;
+    /* keeps it compact */
+    margin-top: -5rem;
+    /* was 2.4rem */
+    margin-bottom: -5rem;
+    /* was 2.4rem */
+  }
+
+  /* If the next block is the bins row, also reduce its top margin/padding */
+  .drag-instruction+.bins-row,
+  .drag-instruction+#bins {
+    margin-top: -0.2rem !important;
+    padding-top: 0 !important;
+  }
+
+  .character-left {
+    position: fixed;
+    bottom: -10px;
+    /* moved down from 5px */
+    left: 20px;
+    width: 150px;
+    /* bigger size */
+    z-index: 9999;
+    animation: bounce 3s infinite ease-in-out;
+  }
+
+  .character-right {
+    position: fixed;
+    bottom: -10px;
+    /* moved down from 5px */
+    right: 14px;
+    width: 170px;
+    /* bigger size */
+    z-index: 9999;
+    animation: bounce 3s infinite ease-in-out;
+  }
+
+  .mascot-final-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  padding: 1.6rem 1.8rem;
+  border-radius: 24px;
+  background: #f8f8f8;
+  max-width: 1000px;
+  margin: 2rem auto;
+}
+
+
+.mascot-img {
+  flex: 0 0 200px;
+  text-align: center;
+}
+
+.mascot-img img {
+  width: 100%;
+  max-width: 200px;
+}
+
+.mascot-text {
+  font-size: 0.8rem;
+  flex: 1;
+  text-align: left;
+}
+
+.mascot-text h2 {
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.mascot-text h2 span {
+  font-weight: bold;
+}
+
+.mascot-text h3 {
+  font-size: 0.6rem;
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  color: #555;
+}
+
+.mascot-text p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #333;
+}
 }

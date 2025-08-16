@@ -191,7 +191,7 @@ function h($s)
     <canvas id="confetti-canvas"></canvas>
 
     <div class="card" role="region" aria-label="สรุปคะแนนและการออกจากเกม">
-        <h1>ขอขอบพระคุณ คุณ<?= h($nickname) ?> ที่ร่วมสนุกกับเรา</h1>
+        <h1>ขอขอบพระคุณ คุณ <?= h($nickname) ?> ที่ร่วมสนุกกับเรา</h1>
 
         <div class="row">ควิซ: <strong><?= (int) $me['quiz'] ?></strong> คะแนน — เวลา
             <strong><?= fmtMMSS((int) $me['time_quiz']) ?></strong>
