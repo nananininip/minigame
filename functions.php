@@ -54,67 +54,126 @@ function lb_line($r) {
     ]) . "\n";
 }
 
-function getLeaderboard() {
+/** Load ALL rows (entire history) */
+function getLeaderboardAll() {
     if (!file_exists(LB_FILE)) return [];
     $rows = [];
     foreach (file(LB_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
         if ($line === '') continue;
-        $rows[] = lb_parse($line);
+        $r = lb_parse($line);
+        if ($r) $rows[] = $r;
     }
     return $rows;
 }
 
-/**
- * Merge-save:
- *   $quizDelta / $wasteDelta   = new points from this run (0 if not played)
- *   $timeQuizDelta / $timeWasteDelta = seconds to ADD (0 if not played)
- * Keeps best component scores (max), sums time per game, recomputes overall.
- */
+/** Top 10 *per player* (best run only for each nickname) — Overall */
+function getLeaderboardTop10PerPlayerOverall() {
+    $all = getLeaderboardAll();
+    $best = [];
+    foreach ($all as $r) {
+        $k = function_exists('mb_strtolower') ? mb_strtolower($r['nickname'], 'UTF-8') : strtolower($r['nickname']);
+        if ($k === '') continue;
+        if (!isset($best[$k])) { $best[$k] = $r; continue; }
+
+        $cur  = $best[$k];
+        $curT = $cur['time_quiz'] + $cur['time_waste'];
+        $newT = $r['time_quiz'] + $r['time_waste'];
+
+        $replace = false;
+        if ($r['overall'] > $cur['overall']) $replace = true;
+        elseif ($r['overall'] == $cur['overall']) {
+            if ($newT < $curT) $replace = true;
+            elseif ($newT == $curT && $r['quiz'] > $cur['quiz']) $replace = true;
+        }
+        if ($replace) $best[$k] = $r;
+    }
+    $rows = array_values($best);
+    usort($rows, function($a,$b){
+        $ta=$a['time_quiz']+$a['time_waste'];
+        $tb=$b['time_quiz']+$b['time_waste'];
+        if($a['overall']!==$b['overall']) return $b['overall']-$a['overall'];
+        if($ta!==$tb) return $ta-$tb;
+        if($a['quiz']!==$b['quiz']) return $b['quiz']-$a['quiz'];
+        return strcasecmp($a['nickname'],$b['nickname']);
+    });
+    return array_slice($rows,0,10);
+}
+
+/** Top 10 *per player* — Quiz */
+function getLeaderboardTop10PerPlayerQuiz() {
+    $all = getLeaderboardAll();
+    $best = [];
+    foreach ($all as $r) {
+        $k = function_exists('mb_strtolower') ? mb_strtolower($r['nickname'], 'UTF-8') : strtolower($r['nickname']);
+        if ($k === '') continue;
+        if (!isset($best[$k])) { $best[$k] = $r; continue; }
+        $cur = $best[$k];
+        $replace = false;
+        if ($r['quiz'] > $cur['quiz']) $replace = true;
+        elseif ($r['quiz'] == $cur['quiz'] && $r['time_quiz'] < $cur['time_quiz']) $replace = true;
+        if ($replace) $best[$k] = $r;
+    }
+    $rows = array_values($best);
+    usort($rows, function($a,$b){
+        if($a['quiz']!==$b['quiz']) return $b['quiz']-$a['quiz'];
+        if($a['time_quiz']!==$b['time_quiz']) return $a['time_quiz']-$b['time_quiz'];
+        return strcasecmp($a['nickname'],$b['nickname']);
+    });
+    return array_slice($rows,0,10);
+}
+
+/** Top 10 *per player* — Waste */
+function getLeaderboardTop10PerPlayerWaste() {
+    $all = getLeaderboardAll();
+    $best = [];
+    foreach ($all as $r) {
+        $k = function_exists('mb_strtolower') ? mb_strtolower($r['nickname'], 'UTF-8') : strtolower($r['nickname']);
+        if ($k === '') continue;
+        if (!isset($best[$k])) { $best[$k] = $r; continue; }
+        $cur = $best[$k];
+        $replace = false;
+        if ($r['waste'] > $cur['waste']) $replace = true;
+        elseif ($r['waste'] == $cur['waste'] && $r['time_waste'] < $cur['time_waste']) $replace = true;
+        if ($replace) $best[$k] = $r;
+    }
+    $rows = array_values($best);
+    usort($rows, function($a,$b){
+        if($a['waste']!==$b['waste']) return $b['waste']-$a['waste'];
+        if($a['time_waste']!==$b['time_waste']) return $a['time_waste']-$b['time_waste'];
+        return strcasecmp($a['nickname'],$b['nickname']);
+    });
+    return array_slice($rows,0,10);
+}
+
+/** Append *one* run (append-only storage) */
 function saveResultToLeaderboard($nickname, $quizDelta, $wasteDelta, $timeQuizDelta = 0, $timeWasteDelta = 0) {
-    $nickname = trim($nickname);
+    // sanitize nickname: trim, drop newlines, remove delimiter
+    $nickname = trim((string)$nickname);
+    $nickname = preg_replace('/\R/u', ' ', $nickname); // remove newlines
+    $nickname = str_replace('|', ' ', $nickname);      // remove delimiter
     if ($nickname === '') return false;
 
-    $rows = getLeaderboard();
-    $found = false;
+    $entry = [
+        'nickname'   => $nickname,
+        'quiz'       => max(0,(int)$quizDelta),
+        'waste'      => max(0,(int)$wasteDelta),
+        'overall'    => max(0,(int)$quizDelta) + max(0,(int)$wasteDelta),
+        'time_quiz'  => max(0,(int)$timeQuizDelta),
+        'time_waste' => max(0,(int)$timeWasteDelta),
+        'updated_at' => time(),
+    ];
 
-    foreach ($rows as &$r) {
-        if (strcasecmp($r['nickname'], $nickname) === 0) {
-            $r['quiz']       = max((int)$r['quiz'],  (int)$quizDelta);
-            $r['waste']      = max((int)$r['waste'], (int)$wasteDelta);
-            $r['time_quiz']  = max(0, (int)$r['time_quiz'])  + max(0, (int)$timeQuizDelta);
-            $r['time_waste'] = max(0, (int)$r['time_waste']) + max(0, (int)$timeWasteDelta);
-            $r['overall']    = (int)$r['quiz'] + (int)$r['waste'];
-            $r['updated_at'] = time();
-            $found = true; break;
-        }
-    } unset($r);
+    $dir = dirname(LB_FILE);
+    if (!is_dir($dir)) @mkdir($dir, 0775, true);
 
-    if (!$found) {
-        $rows[] = [
-            'nickname'   => $nickname,
-            'quiz'       => max(0, (int)$quizDelta),
-            'waste'      => max(0, (int)$wasteDelta),
-            'overall'    => max(0, (int)$quizDelta) + max(0, (int)$wasteDelta),
-            'time_quiz'  => max(0, (int)$timeQuizDelta),
-            'time_waste' => max(0, (int)$timeWasteDelta),
-            'updated_at' => time(),
-        ];
+    $fp = @fopen(LB_FILE, 'a');
+    if (!$fp) return false;
+    if (flock($fp, LOCK_EX)) {
+        fwrite($fp, lb_line($entry));
+        fflush($fp);
+        flock($fp, LOCK_UN);
     }
-
-    // Keep only top 10 by overall desc, total time asc, quiz desc, name
-    usort($rows, function($a, $b) {
-        $ta = $a['time_quiz'] + $a['time_waste'];
-        $tb = $b['time_quiz'] + $b['time_waste'];
-        if ($a['overall'] !== $b['overall']) return $b['overall'] - $a['overall'];
-        if ($ta !== $tb) return $ta - $tb;
-        if ($a['quiz'] !== $b['quiz']) return $b['quiz'] - $a['quiz'];
-        return strcasecmp($a['nickname'], $b['nickname']);
-    });
-    $rows = array_slice($rows, 0, 10);
-
-    $tmp = LB_FILE . '.tmp';
-    file_put_contents($tmp, implode('', array_map('lb_line', $rows)));
-    rename($tmp, LB_FILE);
+    fclose($fp);
     return true;
 }
 
@@ -144,4 +203,8 @@ function fmtMMSS($sec) {
     $sec = max(0, (int)$sec);
     return sprintf('%d:%02d', floor($sec/60), $sec%60);
 }
-?>
+
+/** Legacy shim: some pages may still call this old helper */
+if (!function_exists('getLeaderboard')) {
+    function getLeaderboard() { return getLeaderboardAll(); }
+}

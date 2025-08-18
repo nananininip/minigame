@@ -8,19 +8,31 @@ if (!isset($_SESSION['nickname'])) {
 }
 $nickname = $_SESSION['nickname'];
 
+// Pick THIS user's best run by: overall desc -> total time asc -> quiz desc
 $me = ['quiz' => 0, 'waste' => 0, 'overall' => 0, 'time_quiz' => 0, 'time_waste' => 0];
-foreach (getLeaderboard() as $r) {
-    if (strcasecmp($r['nickname'], $nickname) === 0) {
-        $me = $r;
-        break;
+$all = getLeaderboardAll();
+foreach ($all as $r) {
+    if (strcasecmp($r['nickname'], $nickname) !== 0) continue;
+
+    $curT = (int)$me['time_quiz'] + (int)$me['time_waste'];
+    $newT = (int)$r['time_quiz'] + (int)$r['time_waste'];
+
+    $replace = false;
+    if ($r['overall'] > $me['overall']) $replace = true;
+    elseif ($r['overall'] == $me['overall']) {
+        if ($newT < $curT) $replace = true;
+        elseif ($newT == $curT && $r['quiz'] > $me['quiz']) $replace = true;
     }
+    if ($replace) $me = $r;
 }
-$total_time = (int) $me['time_quiz'] + (int) $me['time_waste'];
-function h($s)
-{
+
+$total_time = (int)$me['time_quiz'] + (int)$me['time_waste'];
+
+function h($s) {
     return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 

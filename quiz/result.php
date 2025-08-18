@@ -8,16 +8,27 @@ if (!isset($_SESSION['nickname'])) {
 }
 $nickname = $_SESSION['nickname'];
 
-// If we just finished quiz, its points come via GET (or session fallback)
 $quizFromGet = isset($_GET['score']) ? (int) $_GET['score'] : (isset($_SESSION['score']) ? (int) $_SESSION['score'] : 0);
 
-// Read current saved row (best so far)
+// Find this user's BEST saved row from full history (for display only)
 $server = ['quiz' => 0, 'waste' => 0, 'time_quiz' => 0, 'time_waste' => 0, 'overall' => 0];
-foreach (getLeaderboard() as $r) {
-  if (strcasecmp($r['nickname'], $nickname) === 0) {
-    $server = $r;
-    break;
+$all = getLeaderboardAll();
+foreach ($all as $r) {
+  if (strcasecmp($r['nickname'], $nickname) !== 0)
+    continue;
+  $curT = $server['time_quiz'] + $server['time_waste'];
+  $newT = $r['time_quiz'] + $r['time_waste'];
+  $replace = false;
+  if ($r['overall'] > $server['overall'])
+    $replace = true;
+  elseif ($r['overall'] == $server['overall']) {
+    if ($newT < $curT)
+      $replace = true;
+    elseif ($newT == $curT && $r['quiz'] > $server['quiz'])
+      $replace = true;
   }
+  if ($replace)
+    $server = $r;
 }
 
 function h($s)
@@ -289,45 +300,61 @@ function h($s)
 
   <script>
     (function () {
-      // Best values from server row
+      // Server’s best values (for display only)
       const server = {
-        quiz: <?= (int) $server['quiz'] ?>,
-        waste: <?= (int) $server['waste'] ?>
+        quiz: <?= (int) ($server['quiz'] ?? 0) ?>,
+        waste: <?= (int) ($server['waste'] ?? 0) ?>
       };
 
-      // Local values present only after Waste game
+      // Values from this run (URL/session)
+      const quizFromGet = <?= (int) $quizFromGet ?>;
+
+      // Values from localStorage (set by games)
       const localWaste = parseInt(localStorage.getItem('waste_score') || '0', 10) || 0;
       const localWasteTime = parseInt(localStorage.getItem('waste_time') || '0', 10) || 0;
+      const localQuizTime = parseInt(localStorage.getItem('quiz_time') || '0', 10) || 0;
 
-      const quizFromGet = <?= (int) $quizFromGet ?>;
+      // For display
       const quizBest = Math.max(quizFromGet, server.quiz);
-      const wasteBest = Math.max(server.waste, localWaste);
+      const wasteBest = Math.max(localWaste, server.waste);
 
-      // Show combined best
       document.getElementById('quizScore').textContent = quizBest;
       document.getElementById('wasteScore').textContent = wasteBest;
       document.getElementById('totalScore').textContent = quizBest + wasteBest;
 
-      // If we have waste info locally, post it once (maps to time_waste on server)
-      if (localWaste || localWasteTime) {
+      // Send to server:
+      // - Quiz was already saved accurately by quiz.php (server-side).
+      // - Only send Quiz here if we *actually* have a measured local quiz_time (otherwise we’d create a 0s tie record).
+      const hasNewWaste = (localWaste > 0 || localWasteTime > 0);
+      const hasNewQuiz = (localQuizTime > 0); // <-- important: require real time
+
+      if (hasNewWaste || hasNewQuiz) {
         const params = new URLSearchParams();
         params.set('nickname', '<?= h($nickname) ?>');
-        params.set('quiz', quizBest);
-        params.set('waste', wasteBest);
-        params.set('overall', quizBest + wasteBest);
-        params.set('time_used', Math.max(0, localWasteTime)); // waste time delta
+        params.set('quiz', hasNewQuiz ? quizBest : 0);
+        params.set('waste', hasNewWaste ? wasteBest : 0);
+        params.set('time_quiz', hasNewQuiz ? localQuizTime : 0);
+        params.set('time_waste', hasNewWaste ? localWasteTime : 0);
 
         fetch('save_leaderboard.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: params.toString()
         }).then(() => {
-          localStorage.removeItem('waste_score');
-          localStorage.removeItem('waste_time');
+          // clear only what we used
+          if (hasNewWaste) {
+            localStorage.removeItem('waste_score');
+            localStorage.removeItem('waste_time');
+          }
+          if (hasNewQuiz) {
+            localStorage.removeItem('quiz_time');
+          }
         }).catch(() => { /* ignore */ });
       }
     })();
   </script>
+
+
 </body>
 
 </html>
