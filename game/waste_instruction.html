@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Waste Sorting Instruction | Green Quest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="waste_instruction.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="../quiz/menu.php">หน้าหลัก</a>
+    <div class="navbar-buttons">
+      <form action="../quiz/exit.php" method="post" style="display:inline;">
+        <button type="submit" class="btn-exit">Exit</button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- CARD -->
+  <main class="instruction-container">
+    <h1>คำแนะนำก่อนเล่นเกมแยกขยะ</h1>
+
+    <p class="lead">นี่คือเกม <b>“แยกขยะที่พบได้ในโรงพยาบาล”</b></p>
+    <ul class="facts">
+      <li>คุณจะต้องลากวัตถุไปยังถังขยะที่ถูกต้อง</li>
+      <li>มีถังทั้งหมด 4 ประเภท: ขยะทั่วไป, ขยะติดเชื้อ, ขยะติดเชื้อรีไซเคิลได้, ผ้าใช้ซ้ำ</li>
+      <li>เกมมีทั้งหมด <b>15</b> ข้อ</li>
+      <li>คุณมีเวลาข้อละ <b>15</b> วินาที</li>
+      <li>ยิ่งลากขยะได้<b>เร็ว</b>เท่าไหร่ ยิ่งได้<b>คะแนนมากเท่านั้น</b></li>
+    </ul>
+    <p class="hint">พร้อมแล้ว เริ่มกันเลย!</p>
+
+    <button id="startWasteBtn" class="start-button">เริ่มเกม</button>
+  </main>
+
+  <script src="waste_instruction.js"></script>
+</body>
+</html>

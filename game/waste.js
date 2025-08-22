@@ -223,7 +223,17 @@ function showFinalScore() {
 
 }
 
-
+function colorizeQuestion(text) {
+  const re = /(.*?)(\s*)(ควรทิ้งถัง(?:ขยะ)?ไหน(?:\s*\?)?)/; 
+  const m = text.match(re);
+  if (m) {
+    const itemPart = m[1].trim();   // ส่วนชื่อไอเทมหรือเนื้อหาต้นประโยค
+    const tailPart = m[3].trim();   // ส่วน "ควรทิ้งถัง(ขยะ)ไหน?"
+    return `<span class="q-item">${itemPart}</span> <span class="q-tail">${tailPart}</span>`;
+  }
+  // ถ้าไม่เจอแพทเทิร์น ก็เน้นทั้งประโยคเป็นส่วนไอเทม
+  return `<span class="q-item">${text}</span>`;
+}
 
 function showWaste(idx) {
   clearInterval(timerInterval);
@@ -233,8 +243,7 @@ function showWaste(idx) {
   const w = wasteItems[idx];
   wasteCard.innerHTML = `
   <div class="waste-content">
-    <div class="question">${w.question}</div>
-
+    <div class="question">${colorizeQuestion(w.question)}</div>
     <div class="timer" style="font-size:3rem; font-weight:bold; margin-bottom:1.5rem;">
       ⏰ <span id="timerNum">${String(timer).padStart(2, '0')}</span> วินาที
     </div>

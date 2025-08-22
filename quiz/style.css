@@ -1,4 +1,6 @@
 /* General resets */
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&family=Prompt:wght@400;600;700&display=swap');
+
 * {
 	box-sizing: border-box;
 	/* overflow: hidden; */
@@ -396,6 +398,7 @@ input[type="text"]:focus {
 }
 
 .question {
+	font-family: 'Prompt', sans-serif;
 	font-size: 1.32rem;
 	font-weight: 700;
 	text-align: center;
@@ -411,6 +414,7 @@ input[type="text"]:focus {
 }
 
 .choices {
+	font-family: 'Prompt', sans-serif;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -419,6 +423,7 @@ input[type="text"]:focus {
 }
 
 .choice-btn {
+	font-family: 'Prompt', sans-serif;
 	background: #fff;
 	border: 2px solid #d3d3d3;
 	border-radius: 13px;
@@ -472,6 +477,7 @@ input[type="text"]:focus {
 }
 
 .btn-next {
+	font-family: 'Kanit', 'Prompt', Arial, sans-serif;
 	display: block;
 	margin: 24px auto 0 auto;
 	background: linear-gradient(90deg, #79b3f9 0%, #66ddb6 100%);

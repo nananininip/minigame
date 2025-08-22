@@ -154,6 +154,7 @@ function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
         }
 
         .btn-main {
+            font-family: 'Prompt', sans-serif;
             text-decoration: none;
             background: linear-gradient(90deg, #baffc9 0, #b1ffe9 100%);
             color: #1f7f52;
@@ -207,6 +208,7 @@ function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
         }
 
         .tab-btn {
+            font-family: 'Prompt', sans-serif;  
             position: relative; /* ensure ::after underline positions correctly */
             appearance: none;
             border: none;

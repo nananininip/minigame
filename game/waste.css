@@ -75,9 +75,6 @@ body {
   margin-top: 4px;
 }
 
-
-
-
 body {
   font-family: 'Prompt', sans-serif;
   background-image: url('assets/backgrounds/background.svg');
@@ -583,6 +580,17 @@ body {
   width: clamp(150px, 80%, 220px) !important;
 }
 
+/* ===== Highlight question parts ===== */
+.question .q-item {
+  color: #0c7e3f;      /* สีเขียวเข้มสำหรับส่วนชื่อไอเทม */
+  font-weight: 800;
+}
+.question .q-tail {
+  color: #000000;      /* สีน้ำตาลอุ่นสำหรับ “ควรทิ้งถังไหน?” */
+  font-weight: 700;
+  opacity: .95;
+}
+
 
 
 /* MacBook 13"+ slight downscale to match Live Server feel */
@@ -656,9 +664,9 @@ body {
 
 
   .timer {
-    font-size: clamp(1.6rem, 2.8vw, 2.2rem) !important;
+    font-size: clamp(2.0rem, 2.8vw, 2.6rem) !important;
     /* bigger size */
-    margin-top: -1.2rem !important;
+    margin-top: 2rem !important;
     text-align: center;
     position: relative;
   }
@@ -953,7 +961,7 @@ body {
     padding: 0 1rem;
   }
 
-    .bin-wrapper {
+  .bin-wrapper {
     max-width: 60px !important;
     margin-top: 10px;
     /* narrower bins */
@@ -965,7 +973,7 @@ body {
     height: clamp(100px, 21vw, 120px) !important;
   }
 
-.bin-drop .bin-lid {
+  .bin-drop .bin-lid {
     max-width: 100px !important;
     margin-top: 15px;
   }
@@ -1041,57 +1049,57 @@ body {
     bottom: 15px !important;
   }
 
-    .mascot-final-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3rem;
-  flex-wrap: wrap;
-  padding: 1.6rem 1.8rem;
-  border-radius: 24px;
-  background: #f8f8f8;
-  max-width: 1000px;
-  margin: 2rem auto;
-}
+  .mascot-final-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    padding: 1.6rem 1.8rem;
+    border-radius: 24px;
+    background: #f8f8f8;
+    max-width: 1000px;
+    margin: 2rem auto;
+  }
 
 
-.mascot-img {
-  flex: 0 0 160px;
-  text-align: center;
-}
+  .mascot-img {
+    flex: 0 0 160px;
+    text-align: center;
+  }
 
-.mascot-img img {
-  width: 100%;
-  max-width: 160px;
-}
+  .mascot-img img {
+    width: 100%;
+    max-width: 160px;
+  }
 
-.mascot-text {
-  font-size: 0.4rem;
-  flex: 1;
-  text-align: left;
-}
+  .mascot-text {
+    font-size: 0.4rem;
+    flex: 1;
+    text-align: left;
+  }
 
-.mascot-text h2 {
-  font-size: 0.6rem;
-  margin-bottom: 1rem;
-}
+  .mascot-text h2 {
+    font-size: 0.6rem;
+    margin-bottom: 1rem;
+  }
 
-.mascot-text h2 span {
-  font-weight: bold;
-}
+  .mascot-text h2 span {
+    font-weight: bold;
+  }
 
-.mascot-text h3 {
-  font-size: 1.2rem;
-  margin-top: 0;
-  margin-bottom: 1.2rem;
-  color: #555;
-}
+  .mascot-text h3 {
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    color: #555;
+  }
 
-.mascot-text p {
-  font-size: 1.2rem;
-  line-height: 1.8;
-  color: #333;
-}
+  .mascot-text p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #333;
+  }
 }
 
 /* iPad Pro 12.9" Portrait (1024px wide) */
@@ -1182,16 +1190,29 @@ body {
   }
 
   .timer {
-    font-size: clamp(0.8rem, 2.4vw, 1.6rem) !important;
-    /* more */
-    margin-top: -0.9rem !important;
-    text-align: center;
-    position: relative;
+    position: absolute !important;
+    top: 10px !important;
+    right: 14px !important;
+    margin: 0 !important;
+    padding: 4px 10px !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    color: #1b0401 !important;
+    font-weight: 800 !important;
+    font-size: clamp(0.95rem, 1.6vw, 1.15rem) !important;
+    line-height: 1 !important;
+    z-index: 5 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    /* ถ้ามีไอคอน ⏱ */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .08) !important;
   }
 
-  #timerNum {
-    font-size: inherit !important;
-  }
+#timerNum{
+  font-size: inherit !important;
+  font-weight: 900 !important;
+}
 
   /* Smaller waste item images */
   .draggable-item img[src*="surgical_gown_cloth.svg"],
@@ -1298,56 +1319,56 @@ body {
   }
 
   .mascot-final-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3rem;
-  flex-wrap: wrap;
-  padding: 1.6rem 1.8rem;
-  border-radius: 24px;
-  background: #f8f8f8;
-  max-width: 1000px;
-  margin: 2rem auto;
-}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    padding: 1.6rem 1.8rem;
+    border-radius: 24px;
+    background: #f8f8f8;
+    max-width: 1000px;
+    margin: 2rem auto;
+  }
 
 
-.mascot-img {
-  flex: 0 0 200px;
-  text-align: center;
-}
+  .mascot-img {
+    flex: 0 0 200px;
+    text-align: center;
+  }
 
-.mascot-img img {
-  width: 100%;
-  max-width: 200px;
-}
+  .mascot-img img {
+    width: 100%;
+    max-width: 200px;
+  }
 
-.mascot-text {
-  font-size: 0.8rem;
-  flex: 1;
-  text-align: left;
-}
+  .mascot-text {
+    font-size: 0.8rem;
+    flex: 1;
+    text-align: left;
+  }
 
-.mascot-text h2 {
-  font-size: 0.8rem;
-  margin-bottom: 1rem;
-}
+  .mascot-text h2 {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
 
-.mascot-text h2 span {
-  font-weight: bold;
-}
+  .mascot-text h2 span {
+    font-weight: bold;
+  }
 
-.mascot-text h3 {
-  font-size: 0.6rem;
-  margin-top: 0;
-  margin-bottom: 1.2rem;
-  color: #555;
-}
+  .mascot-text h3 {
+    font-size: 0.6rem;
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    color: #555;
+  }
 
-.mascot-text p {
-  font-size: 1.2rem;
-  line-height: 1.8;
-  color: #333;
-}
+  .mascot-text p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #333;
+  }
 }
 
 
@@ -1406,7 +1427,7 @@ body {
     margin-bottom: 5px;
   }
 
-   #wasteResult {
+  #wasteResult {
     font-size: clamp(0.8rem, 1.8vw, 1rem) !important;
   }
 
@@ -1424,6 +1445,7 @@ body {
     width: clamp(40px, 28vw, 60px) !important;
     max-width: 60px !important;
   }
+
   /* Smaller waste item images */
   .draggable-item img {
     width: clamp(80px, 22vw, 120px) !important;
@@ -1459,54 +1481,54 @@ body {
   }
 
   .mascot-final-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3rem;
-  flex-wrap: wrap;
-  padding: 1.6rem 1.8rem;
-  border-radius: 24px;
-  background: #f8f8f8;
-  max-width: 1000px;
-  margin: 2rem auto;
-}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    padding: 1.6rem 1.8rem;
+    border-radius: 24px;
+    background: #f8f8f8;
+    max-width: 1000px;
+    margin: 2rem auto;
+  }
 
 
-.mascot-img {
-  flex: 0 0 140px;
-  text-align: center;
-}
+  .mascot-img {
+    flex: 0 0 140px;
+    text-align: center;
+  }
 
-.mascot-img img {
-  width: 100%;
-  max-width: 140px;
-}
+  .mascot-img img {
+    width: 100%;
+    max-width: 140px;
+  }
 
-.mascot-text {
-  font-size: 0.4rem;
-  flex: 1;
-  text-align: left;
-}
+  .mascot-text {
+    font-size: 0.4rem;
+    flex: 1;
+    text-align: left;
+  }
 
-.mascot-text h2 {
-  font-size: 0.4rem;
-  margin-bottom: 1rem;
-}
+  .mascot-text h2 {
+    font-size: 0.4rem;
+    margin-bottom: 1rem;
+  }
 
-.mascot-text h2 span {
-  font-weight: bold;
-}
+  .mascot-text h2 span {
+    font-weight: bold;
+  }
 
-.mascot-text h3 {
-  font-size: 0.8rem;
-  margin-top: 0;
-  margin-bottom: 1.2rem;
-  color: #555;
-}
+  .mascot-text h3 {
+    font-size: 0.8rem;
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    color: #555;
+  }
 
-.mascot-text p {
-  font-size: 1.0rem;
-  line-height: 1.8;
-  color: #333;
-}
+  .mascot-text p {
+    font-size: 1.0rem;
+    line-height: 1.8;
+    color: #333;
+  }
 }

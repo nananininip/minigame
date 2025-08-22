@@ -6,33 +6,67 @@ if (!isset($_SESSION['nickname'])) {
     header('Location: ../index.php');
     exit();
 }
-$nickname = $_SESSION['nickname'];
 
-// Pick THIS user's best run by: overall desc -> total time asc -> quiz desc
-$me = ['quiz' => 0, 'waste' => 0, 'overall' => 0, 'time_quiz' => 0, 'time_waste' => 0];
-$all = getLeaderboardAll();
-foreach ($all as $r) {
-    if (strcasecmp($r['nickname'], $nickname) !== 0) continue;
+$nickname = $_SESSION['nickname'] ?? '';
 
-    $curT = (int)$me['time_quiz'] + (int)$me['time_waste'];
-    $newT = (int)$r['time_quiz'] + (int)$r['time_waste'];
-
-    $replace = false;
-    if ($r['overall'] > $me['overall']) $replace = true;
-    elseif ($r['overall'] == $me['overall']) {
-        if ($newT < $curT) $replace = true;
-        elseif ($newT == $curT && $r['quiz'] > $me['quiz']) $replace = true;
-    }
-    if ($replace) $me = $r;
+/**
+ * แปลงชื่อให้เทียบได้เสมอ (trim + ตัวพิมพ์เล็ก รองรับ UTF-8)
+ */
+function norm_name($s) {
+    $s = trim((string)$s);
+    return function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : strtolower($s);
 }
+
+/** โหลดทุกสถิติ แล้วกรองเฉพาะของผู้เล่นคนนี้ */
+$all  = getLeaderboardAll();
+$mine = array_values(array_filter($all, function($r) use ($nickname){
+    return norm_name($r['nickname']) === norm_name($nickname);
+}));
+
+/**
+ * หา Best Quiz และ Best Waste แยกกัน
+ * - Quiz: คะแนนมากสุด, ถ้าคะแนนเท่ากันเลือกเวลาที่น้อยกว่า
+ * - Waste: คะแนนมากสุด, ถ้าคะแนนเท่ากันเลือกเวลาที่น้อยกว่า
+ */
+$bestQuiz  = ['quiz' => 0, 'time_quiz' => 0];
+$bestWaste = ['waste' => 0, 'time_waste' => 0];
+
+foreach ($mine as $r) {
+    // Best Quiz
+    if (
+        (int)$r['quiz'] > (int)$bestQuiz['quiz'] ||
+        ((int)$r['quiz'] === (int)$bestQuiz['quiz'] && (int)$r['time_quiz'] < (int)$bestQuiz['time_quiz'])
+    ) {
+        $bestQuiz['quiz']      = (int)$r['quiz'];
+        $bestQuiz['time_quiz'] = (int)$r['time_quiz'];
+    }
+
+    // Best Waste
+    if (
+        (int)$r['waste'] > (int)$bestWaste['waste'] ||
+        ((int)$r['waste'] === (int)$bestWaste['waste'] && (int)$r['time_waste'] < (int)$bestWaste['time_waste'])
+    ) {
+        $bestWaste['waste']       = (int)$r['waste'];
+        $bestWaste['time_waste']  = (int)$r['time_waste'];
+    }
+}
+
+/** รวมผลลัพธ์แบบ "Best Quiz + Best Waste" */
+$me = [
+    'quiz'       => (int)$bestQuiz['quiz'],
+    'waste'      => (int)$bestWaste['waste'],
+    'overall'    => (int)$bestQuiz['quiz'] + (int)$bestWaste['waste'],
+    'time_quiz'  => (int)$bestQuiz['time_quiz'],
+    'time_waste' => (int)$bestWaste['time_waste'],
+];
 
 $total_time = (int)$me['time_quiz'] + (int)$me['time_waste'];
 
+/** helper escape */
 function h($s) {
     return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="th">
 
@@ -51,19 +85,13 @@ function h($s) {
             --shadow-lg: 0 18px 44px rgba(32, 151, 101, .16);
         }
 
-        * {
-            box-sizing: border-box
-        }
+        * { box-sizing: border-box }
 
-        html,
-        body {
-            height: 100%
-        }
+        html, body { height: 100% }
 
         body {
-            font-family: 'Prompt', sans-serif;
-            margin: 0;
             font-family: 'Prompt', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+            margin: 0;
             color: var(--ink);
             background:
                 radial-gradient(28rem 28rem at 12% 10%, rgba(138, 217, 232, .28) 0%, rgba(138, 217, 232, 0) 55%),
@@ -115,9 +143,7 @@ function h($s) {
             font-weight: 600;
         }
 
-        .row strong {
-            color: #159a63;
-        }
+        .row strong { color: #159a63; }
 
         .actions {
             margin-top: 18px;
@@ -169,19 +195,11 @@ function h($s) {
             pointer-events: none;
         }
 
-        .btn:hover::after {
-            animation: shine 1000ms ease forwards;
-        }
+        .btn:hover::after { animation: shine 1000ms ease forwards; }
 
-        @keyframes shine {
-            to {
-                transform: translateX(200%);
-            }
-        }
+        @keyframes shine { to { transform: translateX(200%); } }
 
-        .btn-menu {
-            background: linear-gradient(135deg, var(--brand), var(--brand-2));
-        }
+        .btn-menu { background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
 
         .btn-exit {
             background: linear-gradient(135deg, #ff6666, #ff4d4d);
@@ -211,14 +229,17 @@ function h($s) {
         <div class="row">เกมแยกขยะ: <strong><?= (int) $me['waste'] ?></strong> คะแนน — เวลา
             <strong><?= fmtMMSS((int) $me['time_waste']) ?></strong>
         </div>
-        <div class="row"><strong>รวม:</strong> <?= (int) $me['overall'] ?> คะแนน — เวลา
+        <div class="row">รวม: <strong><?= (int) $me['overall'] ?></strong> คะแนน — เวลา
             <strong><?= fmtMMSS($total_time) ?></strong>
         </div>
 
         <div class="actions">
-            <form action="menu.php" method="post"><button type="submit" class="btn btn-menu">กลับไปหน้าเมนู</button>
+            <form action="menu.php" method="post">
+                <button type="submit" class="btn btn-menu">กลับไปหน้าเมนู</button>
             </form>
-            <form action="../index.php" method="get"><button type="submit" class="btn btn-exit">ออกจากเกม</button></form>
+            <form action="../index.php" method="get">
+                <button type="submit" class="btn btn-exit">ออกจากเกม</button>
+            </form>
         </div>
     </div>
 

@@ -142,12 +142,12 @@ if (!isset($_SESSION['nickname'])) {
 
         /* === MENU BUTTONS === */
         .menu-buttons {
-            display: flex;
-            flex-direction: row;
-            gap: 28px;
-            justify-content: center;
-            margin-top: 5px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, auto);  /* เดิม 1fr → เปลี่ยนเป็น auto */
+            column-gap: 24px;                        /* ระยะห่างแนวนอน (ปรับได้) */
+            row-gap: 18px;                           /* ระยะห่างแนวตั้ง (ปรับได้) */
+            justify-content: center;                 /* จัดทั้งกริดให้อยู่กลาง */
+            align-items: center;                     /* จัดปุ่มให้อยู่กึ่งกลางเซลล์ */
         }
 
         .menu-btn {
@@ -160,7 +160,7 @@ if (!isset($_SESSION['nickname'])) {
             font-weight: 700;
             padding: 28px 20px 24px 20px;
             min-width: 175px;
-            width: 170px;
+            width: 250px;
             max-width: 92vw;
             box-shadow: 0 7px 26px #e7fff522, 0 2px 12px #d7fffc;
             margin-bottom: 10px;
@@ -182,7 +182,7 @@ if (!isset($_SESSION['nickname'])) {
         }
 
         /* Responsive adjustments */
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             .navbar {
                 flex-direction: column;
                 align-items: flex-start;
@@ -192,7 +192,7 @@ if (!isset($_SESSION['nickname'])) {
             .menu-container {
                 margin-top: 92px;
                 padding: 32px 3vw 28px 3vw;
-                max-width: 98vw;
+                max-width: 120vw;
             }
 
             .menu-buttons {
@@ -222,9 +222,10 @@ if (!isset($_SESSION['nickname'])) {
     <div class="container menu-container">
         <h1>ยินดีต้อนรับ คุณ <?php echo htmlspecialchars($_SESSION['nickname']); ?> สู่เกมของเรา</h1>
         <div class="menu-buttons">
-            <button class="menu-btn" onclick="location.href='quiz.php'">🧠 ควิซ</button>
-            <button class="menu-btn" onclick="location.href='/minigame/game/waste.html'">🗑️ เกมแยกขยะ</button>
+            <button class="menu-btn" onclick="location.href='quiz_instruction.html'">🧠 ควิซ</button>
+            <button class="menu-btn" onclick="location.href='/minigame/game/waste_instruction.html'">🗑️ เกมแยกขยะ</button>
             <button class="menu-btn" onclick="location.href='leaderboard.php'">🏆 อันดับผู้เล่น</button>
+            <button class="menu-btn" onclick="location.href='../feedback.html'">📊 แบบสอบถาม</button>
         </div>
 
     </div>

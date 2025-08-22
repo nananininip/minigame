@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>แบบสอบถามหลังเล่นเกม</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="feedback.css">
+</head>
+<body>
+  <div class="wrap">
+    <main class="card">
+      <header>
+        <h1>📝 แบบสอบถาม Feedback หลังเล่นเกม</h1>
+        <p>ขอบคุณที่ร่วมกิจกรรมกับเรา🎉! กรุณากรอกแบบสอบถามสั้น ๆ เพื่อช่วยปรับปรุงเกมและกิจกรรมให้ดียิ่งขึ้น</p>
+        <div class="divider"></div>
+      </header>
+
+      <div class="iframe-box">
+        <iframe
+          id="gform"
+          src="https://docs.google.com/forms/d/e/1FAIpQLSewB6QMTOYcfYIlYc9eE3R-sh4cPCgXAZD8FJYxo93y_sVWhw/viewform?embedded=true"
+          allow="clipboard-write"
+          title="แบบสอบถามหลังเล่นเกม">
+          กำลังโหลดแบบฟอร์ม…
+        </iframe>
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="window.location.href='quiz/menu.php'">กลับหน้าเมนู</button>
+        <button class="btn secondary" id="reloadBtn">โหลดฟอร์มใหม่</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="feedback.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Instruction | Green Quest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="quiz_instruction.css" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="menu.php">หน้าหลัก</a>
+    <div class="navbar-buttons">
+      <form action="exit.php" method="post" style="display:inline;">
+        <button type="submit" class="btn-exit">Exit</button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- CARD -->
+  <main class="instruction-container">
+    <h1>คำแนะนำก่อนทำควิซ</h1>
+
+    <p class="lead">
+      ควิซนี้เกี่ยวกับ <b>“การตระหนักรู้ด้านสิ่งแวดล้อมกับวัสดุทางการแพทย์”</b>
+    </p>
+    <ul class="facts">
+      <li>มีทั้งหมด <b>5</b> ข้อ</li>
+      <li>เวลารวม <b>50</b> วินาที</li>
+      <li>เมื่อตอบแล้ว โปรดคลิกที่ปุ่ม <b>"ข้อต่อไป"</b> เพื่อเปลี่ยนข้อ</li>
+    </ul>
+
+    <p class="hint">พร้อมแล้วคลิกเริ่มได้เลย!</p>
+
+    <button id="startQuizBtn" class="start-button">เริ่มควิซ</button>
+  </main>
+
+  <script src="quiz_instruction.js"></script>
+</body>
+</html>
