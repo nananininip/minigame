@@ -1,6 +1,12 @@
 <?php
+// ====== PATH HELPERS ======
+define('BASE_DIR', dirname(__DIR__)); // <project-root> = utils/..
+function path_join($base, $rel) {
+    return rtrim($base, "/\\") . DIRECTORY_SEPARATOR . ltrim($rel, "/\\");
+}
+
 // ====== STORAGE ======
-define('LB_FILE', __DIR__ . '/quiz/leaderboard.txt');
+define('LB_FILE', path_join(BASE_DIR, 'leaderboard/leaderboard.txt'));
 
 /**
  * Parse one leaderboard line.
@@ -179,8 +185,22 @@ function saveResultToLeaderboard($nickname, $quizDelta, $wasteDelta, $timeQuizDe
 
 // ====== QUIZ QUESTIONS ======
 function getQuestions($topic, $num = 5) {
-    $file = __DIR__ . '/quiz/questions.txt';
-    if (!file_exists($file)) throw new Exception('Questions file not found.');
+    // canonical location: <project-root>/quiz/questions.txt
+    $candidates = [
+        path_join(BASE_DIR, 'quiz/questions.txt'),
+        path_join(__DIR__, 'questions.txt'),           // fallback (if someone moved it next to utils/)
+        path_join(getcwd(), 'quiz/questions.txt'),     // last resort: current working dir
+    ];
+
+    $file = null;
+    foreach ($candidates as $cand) {
+        if (is_readable($cand)) { $file = $cand; break; }
+    }
+    if ($file === null) {
+        // บอก path ที่ลองไปแล้วเพื่อ debug (dev เท่านั้น)
+        throw new Exception('Questions file not found. Tried: ' . implode(' , ', $candidates));
+    }
+
     $all = [];
     foreach (file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
         $parts = explode('|', $line);

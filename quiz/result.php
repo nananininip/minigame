@@ -1,9 +1,9 @@
 <?php
 session_start();
-require '../functions.php';
+require '../utils/functions.php';
 
 if (!isset($_SESSION['nickname'])) {
-  header('Location: ../index.php');
+  header('Location: ../utils/index.php');
   exit();
 }
 $nickname = $_SESSION['nickname'];
@@ -293,8 +293,8 @@ function h($s)
     <!-- <div class="muted">ระบบจะอัปเดตคะแนนและเวลาจากเกม Waste ที่เล่นรอบนี้ให้อัตโนมัติ</div> -->
 
     <div class="actions">
-      <a class="btn" href="leaderboard.php">อันดับผู้เล่น</a>
-      <a class="btn outline" href="menu.php">กลับเมนู</a>
+      <a class="btn" href="../leaderboard/leaderboard.php">อันดับผู้เล่น</a>
+      <a class="btn outline" href="../utils/menu.php">กลับเมนู</a>
     </div>
   </div>
 
@@ -336,7 +336,7 @@ function h($s)
         params.set('time_quiz', hasNewQuiz ? localQuizTime : 0);
         params.set('time_waste', hasNewWaste ? localWasteTime : 0);
 
-        fetch('save_leaderboard.php', {
+        fetch('../leaderboard/save_leaderboard.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: params.toString()

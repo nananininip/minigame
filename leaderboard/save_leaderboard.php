@@ -1,5 +1,5 @@
 <?php
-require '../functions.php';
+require '../utils/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nickname   = isset($_POST['nickname']) ? trim($_POST['nickname']) : '';

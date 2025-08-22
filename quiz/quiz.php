@@ -1,9 +1,9 @@
 <?php
 session_start();
-require '../functions.php';
+require '../utils/functions.php';
 
 if (!isset($_SESSION['nickname'])) {
-    header('Location: ../index.php');
+    header('Location: ../utils/index.php');
     exit();
 }
 
@@ -43,7 +43,7 @@ function save_leaderboard_now()
 if (!isset($questions[$currentIndex])) {
     list($quiz_score, $waste_score) = save_leaderboard_now();
     $correctCount = (int) floor($quiz_score / 10);
-    $numWrong = max(0, $numQuestions - $correctCount); // <-- fixed from $GLOBALS['numQuestions']
+    $numWrong = max(0, $numQuestions - $correctCount); 
     unset($_SESSION['quiz_sequence'], $_SESSION['quiz_current'], $_SESSION['score'], $_SESSION['start_time'], $_SESSION['quiz_current_answered']);
     header("Location: result.php?score=$quiz_score&wrong=$numWrong");
     exit();

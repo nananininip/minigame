@@ -1,5 +1,5 @@
 <?php
-require '../functions.php';
+require '../utils/functions.php';
 
 // Only load the first 12 questions
 try {
