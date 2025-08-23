@@ -822,12 +822,6 @@ body {
     max-width: 150px !important;
   }
 
-  .character-left {
-    width: 140px !important;
-    /* smaller for mobile */
-    left: 8px !important;
-    bottom: -8px !important;
-  }
 
   .character-right {
     width: 150px !important;
