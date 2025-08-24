@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>คู่มือแยกขยะก่อนเริ่มเกม • Green Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <style>
+        :root {
+            --green: #7acb96;
+            --blue: #8ad9e8;
+            --paper: #fff;
+            --ink: #222;
+            --muted: #5b6670;
+            --line: #e6e6e6;
+            --bg1: #f9fff4;
+            --bg2: #f2f8ff;
+            --shadow: 0 10px 22px rgba(0, 0, 0, .07), 0 2px 6px rgba(0, 0, 0, .03);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: "Prompt", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+            color: var(--ink);
+            font-size: 17px;
+        }
+
+        header.top {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #fff8;
+            backdrop-filter: saturate(1.2) blur(6px);
+            border-bottom: 1px solid #eaeaea;
+            padding: .8rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        header.top h1 {
+            margin: 0;
+            font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+            font-weight: 700
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem
+        }
+
+        /* Slider */
+        .slides {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: var(--shadow)
+        }
+
+        .track {
+            display: flex;
+            transition: transform .35s ease
+        }
+
+        .slide {
+            min-width: 100%;
+            padding: 1rem 1rem 1.2rem;
+            border-right: 1px solid #f4f4f4
+        }
+
+        .slide:last-child {
+            border-right: none
+        }
+
+        .h2 {
+            margin: .15rem 0 .6rem;
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem)
+        }
+
+        .desc {
+            margin: .2rem 0 .8rem;
+            color: var(--muted);
+            font-size: 1rem
+        }
+
+        /* Tips */
+        .tips {
+            margin: .4rem 0 1rem;
+            color: #516370;
+            font-size: 1rem;
+            background: #f3faf6;
+            border: 1px solid #d7eee3;
+            padding: .5rem .7rem;
+            border-radius: 10px;
+            display: inline-block
+        }
+
+        /* Concepts — smaller, cuter cards */
+        .concepts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: .75rem
+        }
+
+        .card {
+            border: 1.5px solid var(--line);
+            border-radius: 14px;
+            padding: .65rem .7rem;
+            background: linear-gradient(180deg, #fff 0%, #fbfbff 100%);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, .04)
+        }
+
+        .pill {
+            display: inline-block;
+            font-size: .76rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
+            border: 2px solid transparent;
+            margin-bottom: .35rem
+        }
+
+        .pill.disposable {
+            background: #fff0f0;
+            color: #b82d2d;
+            border-color: #f2c4c4
+        }
+
+        .pill.recyclable {
+            background: #eefcf0;
+            color: #147a3e;
+            border-color: #bfe6ca
+        }
+
+        .pill.reusable {
+            background: #eef7ff;
+            color: #1c5aa6;
+            border-color: #c9def8
+        }
+
+        .thumbs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: .25rem
+        }
+
+        figure {
+            margin: 0;
+            width: clamp(90px, 11vw, 108px);
+            text-align: center
+        }
+
+        figure img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            display: block
+        }
+
+        /* Captions bigger + bold */
+        figure figcaption {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #22353d;
+            margin-top: .35rem;
+            line-height: 1.28;
+        }
+
+        /* ==== BIN SLIDES ==== */
+        .bin-layout {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            align-items: center;
+            gap: .9rem;
+        }
+
+        .bin-card {
+            border: 2px dashed #dbe9e1;
+            border-radius: 16px;
+            padding: .75rem .8rem;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfffd 100%);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .03);
+        }
+
+        .bin-card h3 {
+            margin: .05rem 0 .15rem;
+            font-size: 1.05rem
+        }
+
+        .bin-card small {
+            color: #6b7280;
+            font-size: .93rem
+        }
+
+        .bin-layout .thumbs {
+            gap: 12px
+        }
+
+        .bin-layout .thumbs figure {
+            width: clamp(110px, 14vw, 142px);
+        }
+
+        .bin-layout .thumbs figcaption {
+            font-size: 1.06rem;
+            font-weight: 700;
+        }
+
+        .slide:not(:first-child) .desc {
+            font-size: 1.06rem;
+        }
+
+        /* 2×2 for infected-normal */
+        .thumbs-2x2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(120px, 1fr));
+            gap: 18px 26px;
+            justify-items: center;
+            align-items: start;
+        }
+
+        .thumbs-2x2 figure {
+            width: clamp(120px, 16vw, 160px);
+        }
+
+        /* Bin with lid */
+        .bin-poster {
+            text-align: center;
+        }
+
+        .bin-stack {
+            position: relative;
+            width: clamp(190px, 33vw, 270px);
+            margin-inline: auto;
+            aspect-ratio: 3/4;
+            filter: drop-shadow(0 12px 22px rgba(0, 0, 0, .12));
+        }
+
+        .bin-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 86%;
+            height: auto;
+        }
+
+        .bin-lid {
+            position: absolute;
+            top: 6%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: auto;
+        }
+
+        .bin-note {
+            display: inline-block;
+            margin-top: .5rem;
+            padding: .35rem .7rem;
+            border-radius: 999px;
+            background: #eef8ff;
+            color: #184f99;
+            font-weight: 800;
+            font-size: 1rem;
+            border: 1px solid #d8e8ff;
+        }
+
+        /* Tag chips in headings */
+        .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: .9rem;
+            font-weight: 800;
+            border: 2px solid transparent
+        }
+
+        .tag-green {
+            background: #eaffef;
+            color: #1f7a45;
+            border-color: #cfeede
+        }
+
+        .tag-red {
+            background: #ffeaea;
+            color: #b72e2e;
+            border-color: #f6c1c1
+        }
+
+        .tag-redre {
+            background: linear-gradient(90deg, #ffeaea, #eaffef);
+            color: #2b6b3b;
+            border-color: #ecdede
+        }
+
+        .tag-blue {
+            background: #eef5ff;
+            color: #1f56a6;
+            border-color: #cfe0fb
+        }
+
+        /* Pill-styled "ข้าม" */
+        .link {
+            background: transparent;
+            color: #2563eb;
+            font-weight: 800;
+            padding: .5rem .9rem;
+            border-radius: 999px;
+            border: 1.5px solid #cfe0fb;
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            text-decoration: none;
+            transition: all .18s ease;
+        }
+
+        .link::before {
+            content: "⏭";
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .link:hover {
+            background: #eef5ff;
+            transform: translateY(-1px);
+        }
+
+        .link:active {
+            transform: translateY(0);
+        }
+
+        .link:focus-visible {
+            outline: 3px solid #bcd7ff;
+            outline-offset: 2px;
+        }
+
+        /* Footer nav — centered Prev • Dots • Next */
+        .nav {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: .7rem;
+            background: #fff;
+            border-top: 1px solid #eee;
+            gap: .6rem;
+        }
+
+        .center-nav {
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .65rem;
+        }
+
+        .group {
+            grid-column: 3;
+            justify-self: end;
+            display: flex;
+            gap: .6rem;
+            align-items: center
+        }
+
+        button,
+        a.btn {
+            appearance: none;
+            border: 0;
+            border-radius: 10px;
+            padding: .5rem .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: .98rem;
+        }
+
+        .ghost {
+            background: #f4f4f5
+        }
+
+        .primary {
+            background: linear-gradient(90deg, var(--green), var(--blue));
+            color: #fff
+        }
+
+        .link {
+            background: transparent;
+            color: #2563eb
+        }
+
+        .nav-btn {
+            min-width: 86px
+        }
+
+        .dots {
+            display: flex;
+            gap: 7px
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            background: #d9e6d9
+        }
+
+        .dot.active {
+            background: linear-gradient(90deg, var(--green), var(--blue))
+        }
+
+        button:disabled {
+            opacity: .55;
+            cursor: not-allowed
+        }
+
+        @media (max-width: 860px) {
+            .bin-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .bin-stack {
+                width: clamp(200px, 52vw, 320px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top">
+        <h1>🗑️ คู่มือแยกขยะก่อนเริ่มเกม</h1>
+    </header>
+
+    <div class="wrap">
+        <div class="slides" id="slides">
+            <div class="track" id="track">
+
+                <!-- Slide 1: Concepts (smaller cards) -->
+                <section class="slide" aria-label="ทำความเข้าใจสัญลักษณ์">
+                    <h2 class="h2">ทำความเข้าใจสัญลักษณ์: Disposable • Recyclable • Reusable</h2>
+                    <p class="tips">💡 <strong>TIPS:</strong> <strong>Disposable</strong> = ใช้แล้วทิ้ง,
+                        <strong>Recyclable</strong> = ส่งไปรีไซเคิล, <strong>Reusable</strong> = ซักแล้วใช้ซ้ำ
+                    </p>
+
+                    <div class="concepts">
+                        <article class="card">
+                            <span class="pill disposable">DISPOSABLE</span>
+                            <p class="desc">อุปกรณ์ใช้ครั้งเดียวแล้วทิ้ง เพื่อความปลอดภัย
+                                ไม่สามารถรีไซเคิล/ซักกลับมาใช้ใหม่ได้</p>
+                            <div class="thumbs">
+                                <figure><img src="../assets/trash/surgical_gown_no_recycle.svg" alt="Disposable gown">
+                                    <figcaption>กาวน์ (Disposable)</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/head_cap_no_recycle.svg" alt="Disposable cap">
+                                    <figcaption>หมวก (Disposable)</figcaption>
+                                </figure>
+                            </div>
+                        </article>
+
+                        <article class="card">
+                            <span class="pill recyclable">RECYCLABLE</span>
+                            <p class="desc">วัสดุสะอาด/คัดแยกแล้ว เพื่อนำกลับไปแปรรูปเป็นวัตถุดิบใหม่ ต้องทิ้งให้ถูกถัง
+                            </p>
+                            <div class="thumbs">
+                                <figure><img src="../assets/trash/surgical_gown_recycle.svg" alt="Recyclable gown">
+                                    <figcaption>กาวน์ (Recyclable)</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/t-drape.svg" alt="T-Drape Recyclable">
+                                    <figcaption>T-Drape (Recyclable)</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/head_cap_recycle.svg" alt="Recyclable cap">
+                                    <figcaption>หมวก (Recyclable)</figcaption>
+                                </figure>
+                            </div>
+                        </article>
+
+                        <article class="card">
+                            <span class="pill reusable">REUSABLE</span>
+                            <p class="desc">อุปกรณ์ผ้าที่ “ซักและนำกลับมาใช้ได้อีก” ต้องส่งเข้ากระบวนการซัก
+                                ไม่ทิ้งรวมกับขยะทั่วไป</p>
+                            <div class="thumbs">
+                                <figure><img src="../assets/trash/surgical_gown_cloth.svg" alt="Reusable cloth gown">
+                                    <figcaption>กาวน์ผ้า (Reusable)</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/head_cap_cloth.svg" alt="Reusable cloth cap">
+                                    <figcaption>หมวกผ้า (Reusable)</figcaption>
+                                </figure>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Slide 2: Green bin -->
+                <section class="slide" aria-label="ถังทั่วไปไม่ติดเชื้อ">
+                    <h2 class="h2"><span class="tag tag-green">ถัง “ทั่วไปไม่ติดเชื้อ”</span></h2>
+                    <p class="desc">ขยะทั่วไปที่ไม่ปนเปื้อน</p>
+
+                    <div class="bin-layout">
+                        <article class="bin-card">
+                            <h3>ตัวอย่างทิ้งได้</h3>
+                            <small>ของใช้ประจำวันที่ไม่เปื้อนสารคัดหลั่ง</small>
+                            <div class="thumbs">
+                                <figure><img src="../assets/trash/banana.svg" alt="Banana peel">
+                                    <figcaption>เปลือกกล้วย</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/box.svg" alt="Paper box">
+                                    <figcaption>กล่องกระดาษ</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/candy.svg" alt="Candy wrapper">
+                                    <figcaption>ซองลูกอม</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/coffee.svg" alt="Coffee cup">
+                                    <figcaption>แก้วกาแฟ</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/juice.svg" alt="Juice box">
+                                    <figcaption>กล่องน้ำผลไม้</figcaption>
+                                </figure>
+                            </div>
+                        </article>
+
+                        <div class="bin-poster">
+                            <div class="bin-stack" aria-label="ถังทั่วไปไม่ติดเชื้อ">
+                                <img class="bin-lid" src="../assets/bin/green lid.svg" alt="ฝาถังสีเขียว">
+                                <img class="bin-body" src="../assets/bin/green bin.svg" alt="ตัวถังสีเขียว">
+                            </div>
+                            <div class="bin-note">ทิ้งลงถังนี้</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Slide 3: Red bin (infected normal) -->
+                <section class="slide" aria-label="ถังติดเชื้อปกติ">
+                    <h2 class="h2"><span class="tag tag-red">ถัง “ติดเชื้อปกติ”</span></h2>
+                    <p class="desc">ขยะปนเปื้อนสารคัดหลั่ง/เลือด</p>
+
+                    <div class="bin-layout">
+                        <article class="bin-card">
+                            <h3>ตัวอย่างทิ้งได้</h3>
+                            <small>มัดปากถุง/ปิดให้มิดชิด</small>
+                            <div class="thumbs thumbs-2x2">
+                                <figure><img src="../assets/trash/cotton_blood.svg" alt="Used cotton with blood">
+                                    <figcaption>สำลีใช้แล้ว</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/denture.svg" alt="Denture">
+                                    <figcaption>ฟันปลอม</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/glove_with_blood.svg" alt="Bloody gloves">
+                                    <figcaption>ถุงมือเปื้อนเลือด</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/medical_mask.svg" alt="Medical mask">
+                                    <figcaption>หน้ากากอนามัย</figcaption>
+                                </figure>
+                            </div>
+                        </article>
+
+                        <div class="bin-poster">
+                            <div class="bin-stack" aria-label="ถังติดเชื้อ">
+                                <img class="bin-lid" src="../assets/bin/red lid.svg" alt="ฝาถังสีแดง">
+                                <img class="bin-body" src="../assets/bin/red bin.svg" alt="ตัวถังสีแดง">
+                            </div>
+                            <div class="bin-note">ทิ้งลงถังนี้</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Slide 4: Red ♻ bin -->
+                <section class="slide" aria-label="ถังติดเชื้อรีไซเคิลได้">
+                    <h2 class="h2"><span class="tag tag-redre">ถัง “ติดเชื้อรีไซเคิลได้”</span></h2>
+                    <p class="desc">วัสดุทางการแพทย์ที่รีไซเคิลได้ (มีสัญลักษณ์ RECYCLABLE)</p>
+
+                    <div class="bin-layout">
+                        <article class="bin-card">
+                            <h3>ตัวอย่างทิ้งได้</h3>
+                            <small>สะอาด/คัดแยกก่อน</small>
+                            <div class="thumbs">
+                                <figure><img src="../assets/trash/surgical_gown_recycle.svg" alt="Recyclable gown">
+                                    <figcaption>กาวน์ (Recyclable)</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/t-drape.svg" alt="T-Drape recyclable">
+                                    <figcaption>T-Drape</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/head_cap_recycle.svg" alt="Recyclable cap">
+                                    <figcaption>หมวก (Recyclable)</figcaption>
+                                </figure>
+                            </div>
+                        </article>
+
+                        <div class="bin-poster">
+                            <div class="bin-stack" aria-label="ถังติดเชื้อรีไซเคิลได้">
+                                <img class="bin-lid" src="../assets/bin/red lid.svg" alt="ฝาถังสีแดง">
+                                <img class="bin-body" src="../assets/bin/red recycle.svg" alt="ตัวถังรีไซเคิลสีแดง">
+                            </div>
+                            <div class="bin-note">ทิ้งลงถังนี้</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Slide 5: Reusable cloth -->
+                <section class="slide" aria-label="ถังผ้าใช้ซ้ำ">
+                    <h2 class="h2"><span class="tag tag-blue">ถัง “ผ้าใช้ซ้ำ” (Reusable)</span></h2>
+                    <p class="desc">ผ้า/อุปกรณ์ที่ต้องส่งซักเพื่อนำกลับมาใช้ใหม่</p>
+
+                    <div class="bin-layout">
+                        <article class="bin-card">
+                            <h3>ตัวอย่าง</h3>
+                            <small>ส่งเข้ากระบวนการซัก</small>
+                            <div class="thumbs">
+                                <figure><img src="../assets/trash/surgical_gown_cloth.svg" alt="Reusable cloth gown">
+                                    <figcaption>กาวน์ผ้า</figcaption>
+                                </figure>
+                                <figure><img src="../assets/trash/head_cap_cloth.svg" alt="Reusable cloth cap">
+                                    <figcaption>หมวกผ้า</figcaption>
+                                </figure>
+                            </div>
+                        </article>
+
+                        <div class="bin-poster">
+                            <div class="bin-stack" aria-label="ตะกร้าผ้า (ไม่มีฝา)">
+                                <img class="bin-body" src="../assets/bin/laundry basket.svg" alt="ตะกร้าผ้า">
+                            </div>
+                            <div class="bin-note">ส่งเข้าจุดซัก</div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Footer controls (centered) -->
+            <div class="nav">
+                <div class="center-nav" role="navigation" aria-label="Slide navigation">
+                    <button class="ghost nav-btn" id="prevBtn" aria-label="ย้อนกลับ">ย้อนกลับ</button>
+                    <div class="dots" id="dots"></div>
+                    <button class="ghost nav-btn" id="nextBtn" aria-label="ถัดไป">ถัดไป</button>
+                </div>
+                <div class="group">
+                    <a class="link" href="waste.html">ข้าม</a>
+                    <a class="btn primary" href="waste.html" id="startBtn">เริ่มเกมเลย</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple slider
+        const track = document.getElementById('track');
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const startBtn = document.getElementById('startBtn');
+        const dotsBox = document.getElementById('dots');
+
+        let idx = 0;
+        const go = i => { idx = Math.max(0, Math.min(slides.length - 1, i)); track.style.transform = `translateX(-${idx * 100}%)`; updateUI(); };
+        const updateUI = () => {
+            prevBtn.disabled = idx === 0;
+            nextBtn.disabled = idx === slides.length - 1;
+            dotsBox.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+            startBtn.textContent = (idx === slides.length - 1) ? '✅ เข้าใจแล้ว เริ่มเกม' : 'เริ่มเกมเลย';
+        };
+
+        slides.forEach((_, i) => {
+            const d = document.createElement('div');
+            d.className = 'dot' + (i === 0 ? ' active' : '');
+            d.addEventListener('click', () => go(i));
+            dotsBox.appendChild(d);
+        });
+
+        prevBtn.addEventListener('click', () => go(idx - 1));
+        nextBtn.addEventListener('click', () => go(idx + 1));
+        window.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') go(idx + 1);
+            if (e.key === 'ArrowLeft') go(idx - 1);
+            if (e.key === 'Enter' && idx === slides.length - 1) startBtn.click();
+        });
+
+        go(0);
+    </script>
+</body>
+
+</html>

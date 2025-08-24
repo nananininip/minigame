@@ -2,5 +2,5 @@
 sessionStorage.removeItem("waste_timeLeft");
 
 document.getElementById("startWasteBtn")?.addEventListener("click", () => {
-  window.location.href = "waste.html";
+  window.location.href = "instruction.html";
 });
